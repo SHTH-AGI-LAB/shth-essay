@@ -1,78 +1,60 @@
 // app/u/[slug]/page.tsx
-import AssessClient from "@/components/AssessClient";
+"use client";
+
+import { use } from "react";
 import { notFound } from "next/navigation";
+import { useSession } from "next-auth/react";
+import AssessClient from "@/components/AssessClient";
+import { UNIVERSITIES } from "@/data/universities";  // ✅ 완성본 데이터 불러오기
 
-type UniConfig = {
-  criteria: Record<string, number>;
-  scale?: number; // 건국=1000, 기본=100
-  problemWeights?: { "1": number; "2": number }; // 문제1/문제2 가중치
-};
+export default function UniversityPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { data: session, status } = useSession();
+  const { slug } = use(params);
 
-// 대학별 채점 설정
-const UNI: Record<string, UniConfig> = {
-  // 가톨릭대 (100점, 문제1·2 = 50/50)
-  catholic: {
-    criteria: {
-      "논제 이해": 40,
-      "구조와 전개": 25,
-      "논증과 근거": 20,
-      "표현": 10,
-      "형식": 5,
-    },
-    scale: 100,
-    problemWeights: { "1": 50, "2": 50 },
-  },
+  const uni = UNIVERSITIES.find((u) => u.slug === slug);
 
-  // 건국대 (1000점, 문제1·2 = 40/60)
-  konkuk: {
-    criteria: {
-      "논제 이해": 20,
-      "분석": 30,
-      "논증": 30,
-      "창의성": 10,
-      "표현": 10,
-    },
-    scale: 1000,
-    problemWeights: { "1": 40, "2": 60 },
-  },
+  if (!uni) return notFound();
 
-  // 경기대 (100점, 문제1·2 = 30/70)
-  kyonggi: {
-    criteria: {
-      "논제 분석": 20,
-      "비교대조": 20,
-      "그래프/자료분석": 25,
-      "논리력": 20,
-      "표현/형식": 15,
-    },
-    scale: 100,
-    problemWeights: { "1": 30, "2": 70 },
-  },
+  if (status === "loading") {
+    return <p className="p-6">로그인 상태 확인 중...</p>;
+  }
 
-  // 고려대 (추가 예시, 임시 값)
-  korea: {
-    criteria: {
-      "논제 이해": 30,
-      "논증": 40,
-      "표현": 20,
-      "형식": 10,
-    },
-    scale: 100,
-    problemWeights: { "1": 50, "2": 50 },
-  },
-};
-
-export default function UniversityPage({ params }: { params: { slug: string } }) {
-  const slug = params.slug;
-  const data = UNI[slug];
-
-  if (!data) {
-    return notFound();
+  if (!session) {
+    return (
+      <main className="max-w-3xl mx-auto p-8 text-center">
+        <h1 className="text-xl font-bold mb-4">{uni.name} 채점</h1>
+        <p className="text-gray-600 mb-4">채점기를 사용하려면 로그인이 필요합니다.</p>
+        <a
+          href={`/login?redirect=/u/${slug}`}
+          className="px-4 py-2 border rounded bg-blue-500 text-white hover:bg-blue-600"
+        >
+          로그인하러 가기
+        </a>
+      </main>
+    );
   }
 
   return (
-    <main className="max-w-4xl mx-auto p-6 sm:p-8">
-      <AssessClient slug={slug} data={data} />
+    <main className="max-w-3xl mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-2">{uni.name} 채점</h1>
+      <p className="text-gray-600 mb-4">
+        {uni.gradingType} · {uni.scale}점 만점 기준
+      </p>
+      <AssessClient
+        slug={slug}
+        data={{
+          gradingScale: [],
+          criteria: Object.fromEntries(
+            Object.entries(uni.criteria).map(([k, v]) => [k, v.weight])
+          ),
+          scale: uni.scale,
+          problemWeights: { "1": 50, "2": 50 },
+        }}
+      />
     </main>
   );
 }

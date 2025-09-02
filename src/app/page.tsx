@@ -1,5 +1,6 @@
 // app/page.tsx
 import Link from "next/link";
+import Testimonials from "@/components/Testimonials";
 
 const UNIVERSITIES = [
   { name: "가톨릭대", slug: "catholic" },
@@ -14,8 +15,6 @@ const UNIVERSITIES = [
   { name: "서울여대", slug: "swu" },
   { name: "성균관대", slug: "skku" },
   { name: "성신여대", slug: "sungshin" },
-  { name: "세종대", slug: "sejong" },
-  { name: "서울시립대", slug: "uos" },
   { name: "숙명여대", slug: "sookmyung" },
   { name: "숭실대", slug: "soongsil" },
   { name: "아주대", slug: "ajou" },
@@ -24,7 +23,6 @@ const UNIVERSITIES = [
   { name: "중앙대", slug: "cau" },
   { name: "한국외대", slug: "hufs" },
   { name: "한양대", slug: "hanyang" },
-  { name: "항공대", slug: "kau" },
   { name: "홍익대", slug: "hongik" },
 ];
 
@@ -39,7 +37,6 @@ export default function Home() {
             alt="Dr-phyllis 로고"
             className="h-44 sm:h-48 mb-3"
           />
-          
           <p className="mt-2 text-gray-700 text-sm sm:text-base">
             대학별 첨삭 가이드, 총평, PDF까지 한 번에
           </p>
@@ -59,6 +56,25 @@ export default function Home() {
             </li>
           ))}
         </ul>
+
+        {/* 후기 슬라이드 */}
+        <Testimonials />
+
+        {/* 푸터 */}
+        <footer className="mt-20 border-t pt-8 text-center text-gray-600 text-sm">
+          <p className="mb-2">
+            “지금 쓰는 한 줄이, 당신의 미래를 만든다.”
+          </p>
+          <p className="mb-2">
+            대학별 채점 기준 비교, 순간의 글을 미래로 이어주는 AI 첨삭.
+          </p>
+          <p className="italic text-indigo-500">
+            REM의 바다에서 태어난 연구의 결과물 — 시하·태하 연구소
+          </p>
+          <div className="mt-4 text-xs text-gray-400">
+            © 2025 시하·태하 연구소. All Rights Reserved.
+          </div>
+        </footer>
       </div>
     </main>
   );
