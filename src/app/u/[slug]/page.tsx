@@ -46,17 +46,7 @@ export default function UniversityPage({
       <p className="text-gray-600 mb-4">
         {uni.gradingType} · {uni.scale}점 만점 기준
       </p>
-      <AssessClient
-        slug={slug}
-        data={{
-          gradingScale: [], // TODO: 기본 스케일 함수 연결 가능
-          criteria: Object.fromEntries(
-            Object.entries(uni.criteria).map(([k, v]) => [k, v.weight])
-          ),
-          scale: uni.scale,
-          problemWeights: { "1": 50, "2": 50 },
-        }}
-      />
+      <AssessClient slug={slug} />
     </main>
   );
 }
