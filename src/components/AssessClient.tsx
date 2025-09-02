@@ -7,9 +7,11 @@ type University = (typeof UNIVERSITIES)[number];
 
 type Props = {
   slug: string;
-  data: {
-    gradingScale?: any; // 옵션으로 처리
-    [key: string]: any; // 나머지는 느슨하게 허용 (빠른 배포용)
+  data?: {
+    gradingScale?: (total: number) => string;
+    criteria?: Record<string, number>;
+    scale?: number;
+    problemWeights?: Record<string, number>;
   };
 };
 
@@ -25,17 +27,8 @@ function toGrade(total100: number) {
   return "F";
 }
 
-export default function AssessClient({ slug, data }: Props) {
-  const uni = UNIVERSITIES.find((u) => u.slug === slug);
-
-  // 안전 가드
-  if (!uni) {
-    return <p className="p-4 text-red-500">대학 정보가 없습니다.</p>;
-  }
-
-  // 확정 변수 추가
-  const u = uni as University;
-
+export default function AssessClient({ slug, data: _data }: Props) {
+  // ✅ 훅을 함수 최상단으로 이동
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [result, setResult] = useState<null | {
     perCriterion: Record<string, number>;
@@ -43,6 +36,15 @@ export default function AssessClient({ slug, data }: Props) {
     grade: string;
     comments: string[];
   }>(null);
+
+  // 그 다음 uni 계산 + 가드
+  const uni = UNIVERSITIES.find((u) => u.slug === slug);
+  if (!uni) {
+    return <p className="p-4 text-red-500">대학 정보가 없습니다.</p>;
+  }
+
+  // 확정 변수 (유지: TypeScript 에러 방지용)
+  const u = uni as University;
 
   function evaluate() {
     const perCriterion: Record<string, number> = {};
