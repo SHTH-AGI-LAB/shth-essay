@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
+import Link from "next/link"; // ✅ Link 추가
 
 export default function Header() {
   const { data: session } = useSession();
@@ -19,17 +20,20 @@ export default function Header() {
       setLeft(Math.max(0, 3 - used));
     }
   }, [session]); // 세션 바뀔 때마다 다시 계산
-  
 
   return (
-    <header style={{
-      padding: "10px",
-      borderBottom: "1px solid #ddd",
-      display: "flex",
-      gap: 12,
-      alignItems: "center"
-    }}>
-      <a href="/" style={{ fontWeight: 700 }}>시하·태하 연구소</a>
+    <header
+      style={{
+        padding: "10px",
+        borderBottom: "1px solid #ddd",
+        display: "flex",
+        gap: 12,
+        alignItems: "center",
+      }}
+    >
+      <Link href="/" style={{ fontWeight: 700 }}>
+        AI 논술 첨삭
+      </Link>
 
       {session ? (
         <>
@@ -37,18 +41,18 @@ export default function Header() {
           {left !== Infinity && <span>무료 남은 횟수: {left}회</span>}
           <button
             onClick={() => signOut()}
-            style={{ padding:"6px 12px", border:"1px solid #ccc", borderRadius:6 }}
+            style={{ padding: "6px 12px", border: "1px solid #ccc", borderRadius: 6 }}
           >
             로그아웃
           </button>
         </>
       ) : (
-        <a
+        <Link
           href="/login"
-          style={{ padding:"6px 12px", border:"1px solid #ccc", borderRadius:6 }}
+          style={{ padding: "6px 12px", border: "1px solid #ccc", borderRadius: 6 }}
         >
           로그인
-        </a>
+        </Link>
       )}
     </header>
   );
