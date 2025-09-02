@@ -7,6 +7,10 @@ type University = (typeof UNIVERSITIES)[number];
 
 type Props = {
   slug: string;
+  data: {
+    gradingScale?: any; // 옵션으로 처리
+    [key: string]: any; // 나머지는 느슨하게 허용 (빠른 배포용)
+  };
 };
 
 function toGrade(total100: number) {
@@ -21,7 +25,7 @@ function toGrade(total100: number) {
   return "F";
 }
 
-export default function AssessClient({ slug }: Props) {
+export default function AssessClient({ slug, data }: Props) {
   const uni: University | undefined = UNIVERSITIES.find((u) => u.slug === slug);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [result, setResult] = useState<null | {
@@ -90,20 +94,20 @@ export default function AssessClient({ slug }: Props) {
       ))}
 
       <div className="mt-4 flex gap-2 no-print">
-  <button
-    onClick={evaluate}
-    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-  >
-    채점하기
-  </button>
+        <button
+          onClick={evaluate}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          채점하기
+        </button>
 
-  <button
-    onClick={() => window.print()}
-    className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-  >
-    인쇄 / PDF 저장
-  </button>
-</div>
+        <button
+          onClick={() => window.print()}
+          className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+        >
+          인쇄 / PDF 저장
+        </button>
+      </div>
 
       {result && (
         <div className="mt-6 border-t pt-4">
@@ -115,7 +119,9 @@ export default function AssessClient({ slug }: Props) {
               </li>
             ))}
           </ul>
-          <p><strong>총점:</strong> {result.total100}점 → {result.grade}</p>
+          <p>
+            <strong>총점:</strong> {result.total100}점 → {result.grade}
+          </p>
           <p className="mt-2 text-sm text-gray-700">{uni.bonus}</p>
           <div className="mt-3">
             {result.comments.map((c, i) => (
