@@ -26,7 +26,16 @@ function toGrade(total100: number) {
 }
 
 export default function AssessClient({ slug, data }: Props) {
-  const uni: University | undefined = UNIVERSITIES.find((u) => u.slug === slug);
+  const uni = UNIVERSITIES.find((u) => u.slug === slug);
+
+  // 안전 가드
+  if (!uni) {
+    return <p className="p-4 text-red-500">대학 정보가 없습니다.</p>;
+  }
+
+  // 확정 변수 추가
+  const u = uni as University;
+
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [result, setResult] = useState<null | {
     perCriterion: Record<string, number>;
@@ -35,15 +44,11 @@ export default function AssessClient({ slug, data }: Props) {
     comments: string[];
   }>(null);
 
-  if (!uni) {
-    return <p>⚠️ 해당 대학 정보를 찾을 수 없습니다.</p>;
-  }
-
   function evaluate() {
     const perCriterion: Record<string, number> = {};
     let total = 0;
 
-    Object.entries(uni.criteria).forEach(([문제, { desc, weight }]) => {
+    Object.entries(u.criteria).forEach(([문제, { desc, weight }]) => {
       const text = answers[문제] || "";
       let score = 0;
 
@@ -74,10 +79,10 @@ export default function AssessClient({ slug, data }: Props) {
 
   return (
     <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-2">{uni.name} ({uni.gradingType})</h1>
-      <p className="text-gray-700 mb-4">만점: {uni.scale}점</p>
+      <h1 className="text-2xl font-bold mb-2">{u.name} ({u.gradingType})</h1>
+      <p className="text-gray-700 mb-4">만점: {u.scale}점</p>
 
-      {Object.entries(uni.criteria).map(([문제, { desc, weight }]) => (
+      {Object.entries(u.criteria).map(([문제, { desc, weight }]) => (
         <div key={문제} className="mb-6">
           <h2 className="font-semibold">{문제} ({weight}%)</h2>
           <p className="text-sm text-gray-600 mb-2">{desc}</p>
@@ -122,7 +127,7 @@ export default function AssessClient({ slug, data }: Props) {
           <p>
             <strong>총점:</strong> {result.total100}점 → {result.grade}
           </p>
-          <p className="mt-2 text-sm text-gray-700">{uni.bonus}</p>
+          <p className="mt-2 text-sm text-gray-700">{u.bonus}</p>
           <div className="mt-3">
             {result.comments.map((c, i) => (
               <p key={i}>- {c}</p>
