@@ -1,5 +1,6 @@
 // app/page.tsx
 import Link from "next/link";
+import Image from "next/image"; // ✅ next/image 추가
 import Testimonials from "@/components/Testimonials";
 
 const UNIVERSITIES = [
@@ -32,13 +33,16 @@ export default function Home() {
       <div className="mx-auto max-w-5xl">
         {/* 로고 */}
         <div className="mb-10 flex flex-col items-center text-center">
-          <img
+          <Image
             src="/logo.png"
             alt="Dr-phyllis 로고"
-            className="h-44 sm:h-48 mb-3"
+            width={192}
+            height={192}
+            priority
+            className="mb-3 h-44 sm:h-48 w-auto"
           />
           <p className="mt-2 text-gray-700 text-sm sm:text-base">
-            논술 1타강사, 직접 학교별 문제유형과 채점기준까지 반영 🖋️ PDF까지 한번에
+            논술 1타 강사가 학교별 문제 유형과 채점 기준까지 반영, PDF까지 한 번에
           </p>
         </div>
 
@@ -62,14 +66,10 @@ export default function Home() {
 
         {/* 푸터 */}
         <footer className="mt-20 border-t pt-8 text-center text-gray-600 text-sm">
-          <p className="mb-2">
-            “지금 쓰는 한 줄이, 당신의 미래를 만든다.”
-          </p>
-          <p className="mb-2">
-            순간의 글을 미래로 이어주는 AI 첨삭.
-          </p>
+          <p className="mb-2">지금 쓰는 한 줄이, 당신의 미래를 만든다.</p>
+          <p className="mb-2">순간의 글을 미래로 이어주는 AI 첨삭.</p>
           <p className="italic text-indigo-500">
-            논술은 입시의 '희망'입니다, 이제 첨삭은 누구에게나 열려있습니다  
+            누구에게나 열려 있는 대입 논술, 이제 편하게 공부하세요.
           </p>
           <div className="mt-4 text-xs text-gray-400">
             © 2025 시하·태하 AGI 연구소. All Rights Reserved.
