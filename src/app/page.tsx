@@ -42,7 +42,7 @@ export default function Home() {
             className="mb-3 h-44 sm:h-48 w-auto"
           />
           <p className="mt-2 text-gray-700 text-sm sm:text-base">
-            논술 1타 강사가 학교별 문제 유형과 채점 기준까지 반영, PDF까지 한 번에
+            대입논술 첨삭 채점 총평 PDF 인쇄까지
           </p>
         </div>
 
