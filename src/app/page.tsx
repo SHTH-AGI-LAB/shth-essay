@@ -38,7 +38,7 @@ export default function Home() {
             className="h-44 sm:h-48 mb-3"
           />
           <p className="mt-2 text-gray-700 text-sm sm:text-base">
-            대학별 첨삭 가이드, 총평, PDF까지 한 번에
+            논술 1타강사, 직접 학교별 문제유형과 채점기준까지 반영 🖋️ PDF까지 한번에
           </p>
         </div>
 
@@ -66,13 +66,13 @@ export default function Home() {
             “지금 쓰는 한 줄이, 당신의 미래를 만든다.”
           </p>
           <p className="mb-2">
-            대학별 채점 기준 비교, 순간의 글을 미래로 이어주는 AI 첨삭.
+            순간의 글을 미래로 이어주는 AI 첨삭.
           </p>
           <p className="italic text-indigo-500">
-            REM의 바다에서 태어난 연구의 결과물 — 시하·태하 연구소
+            논술은 입시의 '희망'입니다, 이제 첨삭은 누구에게나 열려있습니다  
           </p>
           <div className="mt-4 text-xs text-gray-400">
-            © 2025 시하·태하 연구소. All Rights Reserved.
+            © 2025 시하·태하 AGI 연구소. All Rights Reserved.
           </div>
         </footer>
       </div>

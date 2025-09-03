@@ -32,7 +32,7 @@ export default function Header() {
       }}
     >
       <Link href="/" style={{ fontWeight: 700 }}>
-        AI 논술 첨삭
+        대한민국 최초, 학교별 맞춤 첨삭앱 Dr-phyllis
       </Link>
 
       {session ? (
