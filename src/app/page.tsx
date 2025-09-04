@@ -1,8 +1,9 @@
 // app/page.tsx
 import Link from "next/link";
-import Image from "next/image"; // ✅ next/image 추가
+import Image from "next/image";
 import Testimonials from "@/components/Testimonials";
-
+import PayButton from "@/components/PayButton";
+ 
 const UNIVERSITIES = [
   { name: "가톨릭대", slug: "catholic" },
   { name: "건국대", slug: "konkuk" },
@@ -64,32 +65,53 @@ export default function Home() {
         {/* 후기 슬라이드 */}
         <Testimonials />
 
+        {/* 테스트 상품 (토스 심사용) */}
+        <section className="mt-20 max-w-2xl mx-auto rounded-lg bg-white shadow p-8 text-center border border-indigo-300">
+          <h2 className="text-xl font-bold text-gray-900 mb-4 text-indigo-600">
+            대입논술 AI 첨삭 1회권 (테스트용)
+          </h2>
+          <p className="text-gray-600 mb-6">
+            본 상품은 토스페이먼츠 입점 심사를 위한 테스트 상품입니다.<br />
+            실제 결제가 이루어지지 않습니다.
+          </p>
+
+          {/* 가격 표시 */}
+          <div className="text-lg font-semibold text-indigo-600 mb-6">
+            1,000원
+          </div>
+
+          {/* 결제 버튼 */}
+          <PayButton
+            amount={1000}
+            orderName="대입논술 AI 첨삭 1회권 (테스트)"
+          />
+        </section>
+
         {/* 푸터 */}
-<footer className="mt-20 border-t pt-8 text-center text-gray-600 text-sm">
-  <p className="mb-2">
-    “지금 쓰는 한 줄이, 당신의 미래를 만든다.”
-  </p>
-  <p className="mb-2">
-    순간의 글을 미래로 이어주는 AI 첨삭.
-  </p>
-  <p className="italic text-indigo-500">
-    누구에게나 열려있는 대입논술 이제 편하게 공부하세요.    
-  </p>
+        <footer className="mt-20 border-t pt-8 text-center text-gray-600 text-sm">
+          <p className="mb-2">
+            “지금 쓰는 한 줄이, 당신의 미래를 만든다.”
+          </p>
+          <p className="mb-2">
+            순간의 글을 미래로 이어주는 AI 첨삭.
+          </p>
+          <p className="italic text-indigo-500">
+            누구에게나 열려있는 대입논술 이제 편하게 공부하세요.
+          </p>
 
-  {/* 사업자 정보 (심사용) */}
-  <div className="mt-6 text-xs text-gray-500 leading-5">
-    <p>상호명: 닥터필리스</p>
-    <p>사업자등록번호: 159-91-00334</p>
-    <p>대표자명: 김명화</p>
-    <p>사업장 주소: 광주광역시 남구 행암도동길 43-11</p>
-    <p>대표번호: 062-651-0922 공부히히 010-2734-5261</p>
-  </div>
+          {/* 사업자 정보 (심사용) */}
+          <div className="mt-6 text-xs text-gray-500 leading-5">
+            <p>상호명: 닥터필리스</p>
+            <p>사업자등록번호: 159-91-00334</p>
+            <p>대표자명: 김명화</p>
+            <p>사업장 주소: 광주광역시 남구 행암도동길 43-11</p>
+            <p>대표번호: 062-651-0922 / 010-2734-5261</p>
+          </div>
 
-  <div className="mt-4 text-xs text-gray-400">
-    © 2025 Dr-Phyllis. All Rights Reserved.
-  </div>
-</footer>
-
+          <div className="mt-4 text-xs text-gray-400">
+            © 2025 Dr-Phyllis. All Rights Reserved.
+          </div>
+        </footer>
       </div>
     </main>
   );
