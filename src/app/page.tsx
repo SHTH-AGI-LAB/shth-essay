@@ -65,16 +65,31 @@ export default function Home() {
         <Testimonials />
 
         {/* 푸터 */}
-        <footer className="mt-20 border-t pt-8 text-center text-gray-600 text-sm">
-          <p className="mb-2">지금 쓰는 한 줄이, 당신의 미래를 만든다.</p>
-          <p className="mb-2">순간의 글을 미래로 이어주는 AI 첨삭.</p>
-          <p className="italic text-indigo-500">
-            누구에게나 열려 있는 대입 논술, 이제 편하게 공부하세요.
-          </p>
-          <div className="mt-4 text-xs text-gray-400">
-            © 2025 시하·태하 AGI 연구소. All Rights Reserved.
-          </div>
-        </footer>
+<footer className="mt-20 border-t pt-8 text-center text-gray-600 text-sm">
+  <p className="mb-2">
+    “지금 쓰는 한 줄이, 당신의 미래를 만든다.”
+  </p>
+  <p className="mb-2">
+    순간의 글을 미래로 이어주는 AI 첨삭.
+  </p>
+  <p className="italic text-indigo-500">
+    누구에게나 열려있는 대입논술 이제 편하게 공부하세요.    
+  </p>
+
+  {/* 사업자 정보 (심사용) */}
+  <div className="mt-6 text-xs text-gray-500 leading-5">
+    <p>상호명: 닥터필리스</p>
+    <p>사업자등록번호: 159-91-00334</p>
+    <p>대표자명: 김명화</p>
+    <p>사업장 주소: 광주광역시 남구 행암도동길 43-11</p>
+    <p>대표번호: 062-651-0922 공부히히 010-2734-5261</p>
+  </div>
+
+  <div className="mt-4 text-xs text-gray-400">
+    © 2025 Dr-Phyllis. All Rights Reserved.
+  </div>
+</footer>
+
       </div>
     </main>
   );
