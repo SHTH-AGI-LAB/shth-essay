@@ -36,6 +36,13 @@ export default function Header() {
       </Link>
 
       <Link
+        href="/about"
+        style={{ padding: "6px 12px", border: "1px solid #ccc", borderRadius: 6 }}
+      >
+        소개
+      </Link>
+
+      <Link
         href="/payment"
         style={{ padding: "6px 12px", border: "1px solid #ccc", borderRadius: 6 }}
       >
