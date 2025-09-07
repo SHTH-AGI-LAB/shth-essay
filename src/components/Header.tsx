@@ -27,47 +27,75 @@ export default function Header() {
         padding: "10px",
         borderBottom: "1px solid #ddd",
         display: "flex",
-        gap: 12,
+        justifyContent: "space-between",
         alignItems: "center",
+        gap: 12,
       }}
     >
-      <Link href="/" style={{ fontWeight: 700 }}>
-        학교별 맞춤 첨삭앱 Dr-phyllis
-      </Link>
+      {/* Left: Logo + Nav */}
+      <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+        <Link href="/" style={{ fontWeight: 700 }}>
+          학교별 맞춤 첨삭앱 Dr-phyllis
+        </Link>
 
-      <Link
-        href="/about"
-        style={{ padding: "6px 12px", border: "1px solid #ccc", borderRadius: 6 }}
-      >
-        소개
-      </Link>
-
-      <Link
-        href="/payment"
-        style={{ padding: "6px 12px", border: "1px solid #ccc", borderRadius: 6 }}
-      >
-        결제방식
-      </Link>
-
-      {session ? (
-        <>
-          <span>안녕하세요, {session.user?.name}님 👋</span>
-          {left !== Infinity && <span>무료 남은 횟수: {left}회</span>}
-          <button
-            onClick={() => signOut()}
-            style={{ padding: "6px 12px", border: "1px solid #ccc", borderRadius: 6 }}
-          >
-            로그아웃
-          </button>
-        </>
-      ) : (
         <Link
-          href="/login"
+          href="/about"
           style={{ padding: "6px 12px", border: "1px solid #ccc", borderRadius: 6 }}
         >
-          로그인
+          소개
         </Link>
-      )}
+
+        <Link
+          href="/payment"
+          style={{ padding: "6px 12px", border: "1px solid #ccc", borderRadius: 6 }}
+        >
+          결제방식
+        </Link>
+
+        <Link
+          href="/refund"
+          style={{ padding: "6px 12px", border: "1px solid #ccc", borderRadius: 6 }}
+        >
+          환불정책
+        </Link>
+
+        <Link
+          href="/terms"
+          style={{ padding: "6px 12px", border: "1px solid #ccc", borderRadius: 6 }}
+        >
+          이용약관
+        </Link>
+
+        <Link
+          href="/privacy"
+          style={{ padding: "6px 12px", border: "1px solid #ccc", borderRadius: 6 }}
+        >
+          개인정보처리방침
+        </Link>
+      </div>
+
+      {/* Right: Auth */}
+      <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+        {session ? (
+          <>
+            <span>안녕하세요, {session.user?.name}님 👋</span>
+            {left !== Infinity && <span>무료 남은 횟수: {left}회</span>}
+            <button
+              onClick={() => signOut()}
+              style={{ padding: "6px 12px", border: "1px solid #ccc", borderRadius: 6 }}
+            >
+              로그아웃
+            </button>
+          </>
+        ) : (
+          <Link
+            href="/login"
+            style={{ padding: "6px 12px", border: "1px solid #ccc", borderRadius: 6 }}
+          >
+            로그인
+          </Link>
+        )}
+      </div>
     </header>
   );
 }
