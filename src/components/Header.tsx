@@ -35,7 +35,7 @@ export default function Header() {
       {/* Left: Logo + Nav */}
       <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
         <Link href="/" style={{ fontWeight: 700 }}>
-          학교별 맞춤 첨삭앱 Dr-phyllis
+          닥터필리스
         </Link>
 
         <Link
