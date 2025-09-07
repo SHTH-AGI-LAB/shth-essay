@@ -15,7 +15,6 @@ const handler = NextAuth({
     }),
     KakaoProvider({
       clientId: process.env.KAKAO_CLIENT_ID!,
-      // 카카오 Secret이 없으면 이 줄은 잠시 빼도 돼요.
       clientSecret: process.env.KAKAO_CLIENT_SECRET!,
     }),
   ],
