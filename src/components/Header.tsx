@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
-import Link from "next/link"; // ✅ Link 추가
+import Link from "next/link";
 
 export default function Header() {
   const { data: session } = useSession();
-  const [left, setLeft] = useState<number>(3); // ✅ 기본값 3회
+  const [left, setLeft] = useState<number>(3);
 
   useEffect(() => {
     if (typeof document === "undefined") return;
@@ -15,11 +15,11 @@ export default function Header() {
 
     const paid = document.cookie.includes("paid=true");
     if (paid) {
-      setLeft(Infinity); // 무제한이면 표시 안 함
+      setLeft(Infinity);
     } else {
       setLeft(Math.max(0, 3 - used));
     }
-  }, [session]); // 세션 바뀔 때마다 다시 계산
+  }, [session]);
 
   return (
     <header
@@ -33,6 +33,13 @@ export default function Header() {
     >
       <Link href="/" style={{ fontWeight: 700 }}>
         학교별 맞춤 첨삭앱 Dr-phyllis
+      </Link>
+
+      <Link
+        href="/payment"
+        style={{ padding: "6px 12px", border: "1px solid #ccc", borderRadius: 6 }}
+      >
+        결제방식
       </Link>
 
       {session ? (

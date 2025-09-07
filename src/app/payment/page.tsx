@@ -1,0 +1,62 @@
+// src/app/payment/page.tsx
+export const metadata = {
+  title: "결제방식 | Dr-phyllis",
+  description: "닥터필리스 결제수단 및 유의사항 안내",
+};
+
+export default function PaymentPage() {
+  return (
+    <main className="mx-auto max-w-3xl p-6 sm:p-10">
+      <h1 className="text-2xl font-bold mb-6">결제 방식 안내</h1>
+
+      <section className="space-y-3 mb-8">
+        <h2 className="text-lg font-semibold">지원 결제수단</h2>
+        <ul className="list-disc pl-6 space-y-1 text-gray-700">
+          <li>신용/체크카드 (국내 주요 카드사)</li>
+          <li>카카오페이</li>
+          <li>네이버페이</li>
+          <li>토스페이</li>
+          <li>삼성페이 (지원 단말기 한정)</li>
+        </ul>
+        <p className="text-sm text-gray-500">
+          ※ 결제수단은 순차 오픈될 수 있으며, 심사 진행 상황에 따라 일부 결제는 한시적으로 비활성화될 수 있습니다.
+        </p>
+      </section>
+
+      <section className="space-y-3 mb-8">
+        <h2 className="text-lg font-semibold">상품 유형</h2>
+        <p className="text-gray-700">
+          닥터필리스는 <b>대입논술 AI 첨삭</b> 및 <b>대학별 맞춤 피드백</b>을 제공하는
+          <b>디지털/무형 서비스</b>입니다. (PDF 총평/피드백 제공)
+        </p>
+      </section>
+
+      <section className="space-y-3 mb-8">
+        <h2 className="text-lg font-semibold">서비스 제공(이용) 기간</h2>
+        <ul className="list-disc pl-6 space-y-1 text-gray-700">
+          <li>단건 첨삭권: 결제 후 <b>7일 이내</b> 초안 제출, 제출일로부터 <b>최대 5일 이내</b> 피드백 제공</li>
+          <li>패키지(다회권): 결제일로부터 <b>6개월 이내</b> 사용</li>
+        </ul>
+      </section>
+
+      <section className="space-y-3 mb-8">
+        <h2 className="text-lg font-semibold">문의 / 고객센터</h2>
+        <ul className="list-disc pl-6 space-y-1 text-gray-700">
+          <li>대표번호: 062-651-0922 / 010-2734-5261</li>
+          <li>이메일: support@dr-phyllis.com</li>
+          <li>운영시간: 평일 10:00~18:00 (주말/공휴일 휴무)</li>
+        </ul>
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-lg font-semibold">사업자 정보</h2>
+        <div className="text-gray-700">
+          <p>상호명: 닥터필리스</p>
+          <p>사업자등록번호: 159-91-00334</p>
+          <p>대표자명: 김명화</p>
+          <p>사업장 주소: 광주광역시 남구 행암도동길 43-11</p>
+        </div>
+      </section>
+    </main>
+  );
+}
