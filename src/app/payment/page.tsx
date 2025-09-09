@@ -1,4 +1,8 @@
 // src/app/payment/page.tsx
+"use client";
+
+import Link from "next/link";
+
 export const metadata = {
   title: "결제방식 | Dr-phyllis",
   description: "닥터필리스 결제수단 및 유의사항 안내",
@@ -9,6 +13,7 @@ export default function PaymentPage() {
     <main className="mx-auto max-w-3xl p-6 sm:p-10">
       <h1 className="text-2xl font-bold mb-6">결제 방식 안내</h1>
 
+      {/* 결제수단 */}
       <section className="space-y-3 mb-8">
         <h2 className="text-lg font-semibold">지원 결제수단</h2>
         <ul className="list-disc pl-6 space-y-1 text-gray-700">
@@ -23,14 +28,66 @@ export default function PaymentPage() {
         </p>
       </section>
 
+      {/* 상품 유형 */}
       <section className="space-y-3 mb-8">
         <h2 className="text-lg font-semibold">상품 유형</h2>
         <p className="text-gray-700">
           닥터필리스는 <b>대입논술 AI 첨삭</b> 및 <b>대학별 맞춤 피드백</b>을 제공하는
-          <b>디지털/무형 서비스</b>입니다. (PDF 총평/피드백 제공)
+          <b> 디지털/무형 서비스</b>입니다. (PDF 총평/피드백 제공)
         </p>
+
+        <div className="grid gap-6 md:grid-cols-3 mt-6">
+          {/* 10회 */}
+          <div className="border rounded-lg p-4 shadow-sm hover:shadow-md transition">
+            <h3 className="font-bold text-lg">스탠다드 10회</h3>
+            <p className="text-gray-600 mt-2">부담 없이 시작하기 좋은 입문용</p>
+            <p className="text-xl font-bold mt-3">29,000원</p>
+            <p className="text-sm text-gray-500 mb-4">(1회 2,900원)</p>
+            <Link
+              href="/checkout?plan=10"
+              className="block w-full text-center bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
+            >
+              구매하기
+            </Link>
+          </div>
+
+          {/* 30회 */}
+          <div className="border rounded-lg p-4 shadow-sm hover:shadow-md transition relative">
+            <span className="absolute -top-3 left-3 bg-yellow-400 text-xs font-semibold px-2 py-1 rounded">
+              ⭐ 가장 인기 많은 상품
+            </span>
+            <h3 className="font-bold text-lg">프리미엄 30회</h3>
+            <p className="text-gray-600 mt-2">꾸준히 학습하며 성과를 내는 베스트셀러</p>
+            <p className="text-xl font-bold mt-3">79,000원</p>
+            <p className="text-sm text-gray-500 mb-4">(1회 약 2,633원)</p>
+            <Link
+              href="/checkout?plan=30"
+              className="block w-full text-center bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
+            >
+              구매하기
+            </Link>
+          </div>
+
+          {/* 100회 */}
+          <div className="border rounded-lg p-4 shadow-sm hover:shadow-md transition relative">
+            <span className="absolute -top-3 left-3 bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded">
+              👩‍🏫 교사 추천
+            </span>
+            <h3 className="font-bold text-lg">VIP 100회</h3>
+            <p className="text-gray-600 mt-2">장기 학습, 최고의 가성비</p>
+            <p className="text-xl font-bold mt-3">199,000원</p>
+            <p className="text-sm text-gray-500 mb-4">(1회 1,990원)</p>
+            <Link
+              href="/checkout?plan=100"
+              className="block w-full text-center bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
+            >
+              구매하기
+            </Link>
+          </div>
+        </div>
       </section>
 
+      {/* 서비스 제공 기간 */}
       <section className="space-y-3 mb-8">
         <h2 className="text-lg font-semibold">서비스 제공(이용) 기간</h2>
         <ul className="list-disc pl-6 space-y-1 text-gray-700">
@@ -39,6 +96,7 @@ export default function PaymentPage() {
         </ul>
       </section>
 
+      {/* 고객센터 */}
       <section className="space-y-3 mb-8">
         <h2 className="text-lg font-semibold">문의 / 고객센터</h2>
         <ul className="list-disc pl-6 space-y-1 text-gray-700">
@@ -48,6 +106,7 @@ export default function PaymentPage() {
         </ul>
       </section>
 
+      {/* 사업자 정보 */}
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">사업자 정보</h2>
         <div className="text-gray-700">
