@@ -1,53 +1,58 @@
-// src/app/about/page.tsx
-export const metadata = {
-  title: "소개 | Dr-phyllis",
-  description: "닥터필리스 AI 논술 첨삭 서비스 소개",
-};
-
+// app/about/page.tsx
 export default function AboutPage() {
   return (
-    <main className="mx-auto max-w-3xl p-6 sm:p-10">
-      <h1 className="text-2xl font-bold mb-6">닥터필리스 소개</h1>
+    <main className="max-w-3xl mx-auto p-8 space-y-6">
+      <h1 className="text-3xl font-bold">소개</h1>
 
-      <section className="space-y-4 mb-10">
-        <p>
-          닥터필리스는 <b>AI 기반 대입논술 첨삭 서비스</b>입니다. 
-          대학별 기출 문제와 채점 기준을 반영하여, 학생 개개인의 글을 
-          정확하고 신속하게 분석하고 피드백합니다.
-        </p>
-        <p>
-          단순한 글 교정이 아니라 <b>사고력, 창의력, 문제해결능력</b>을 함께 키울 수 있도록 
-          맞춤형 첨삭과 총평 PDF를 제공합니다.
-        </p>
-      </section>
+      <p>
+        <strong>안녕하세요, 닥터필리스입니다.</strong>
+      </p>
 
-      <section className="space-y-3 mb-10">
-        <h2 className="text-lg font-semibold">왜 닥터필리스인가?</h2>
-        <ul className="list-disc pl-6 space-y-1 text-gray-700">
-          <li>15년 경력 논술 전문 강사의 노하우</li>
-          <li>스프링거 네이처 논문 게재 경험으로 검증된 전문성</li>
-          <li>한양대, 경희대, 고려대, 중앙대 등 주요 대학 합격생 다수 배출</li>
-          <li>등록 시 무료 정시 라인 상담 제공</li>
-          <li>조용한 전원주택 연구실(방3개, 화장실3개, 거실·파티룸) 기반</li>
-        </ul>
-      </section>
+      <p>
+        닥터필리스는 독자적인 상표권을 보유하고 있으며, 15년 경력의
+        대입논술 전문 학원입니다.
+      </p>
 
-      <section className="space-y-3 mb-10">
-        <h2 className="text-lg font-semibold">우리의 비전</h2>
-        <p>
-          4차 산업혁명과 AI 시대, 단순 암기가 아닌 <b>멘탈 관리와 창의융합적 사고</b>가 
-          가장 중요한 경쟁력이 됩니다. 닥터필리스는 자기주도학습, 심리상담, 
-          AI 논술 첨삭을 통해 아이들의 균형 있는 성장을 돕습니다.
-        </p>
-      </section>
+      <p>
+        우리가 학술 논문을 쓸 때 네이처, 사이언스 등 저널마다 추구하는
+        형식과 내용이 다르듯, 대입논술 역시 대학마다 기준과 방향성이
+        뚜렷합니다. 그러나 여전히 많은 수험생들은 이러한 차이를 반영한{" "}
+        <strong>체계적인 첨삭</strong>을 받지 못한 채 시험을 치르고 있습니다.
+      </p>
 
-      <section className="space-y-3">
-        <h2 className="text-lg font-semibold">문의</h2>
-        <ul className="list-disc pl-6 space-y-1 text-gray-700">
-          <li>대표번호: 062-651-0922 / 010-2734-5261</li>
-          <li>이메일: support@dr-phyllis.com</li>
-        </ul>
-      </section>
+      <p>
+        예를 들어, 한양대 인문 논술(1200자)은 글 구성에 대한 채점 기준은
+        없지만 구체적 예증, 비판적 사고, 창의성이 높은 점수를 받습니다.
+        반대로 건국대는 글자 수 제한이 없고 1000점 만점에 합격자 분포가
+        700~900점까지 폭넓습니다. 중앙대는 글자 수 제한이 30자 내외로
+        협소하며 내신 반영 비율과 수능 최저학력 기준이 높아, 논술의 비중이
+        상대적으로 낮습니다.
+      </p>
+
+      <p>
+        또한 인하대 논술의 경우 “제시문 활용”은 단순 요약이 아닌,
+        주장–반론–재반론 구조를 따라 서술합니다. 이는 각 대학이 가진 전통,
+        방향성, 정체성을 그대로 드러내는 특징입니다.
+      </p>
+
+      <p>
+        저는 네이처에 논문을 여러번 통과시킨 경험이 있습니다. 가장 엄격한 1차 심사
+        프로그램을 통과하는 것이 첫 관문이고, 이는 곧 대학별 논술전형이
+        지닌 차별성과도 닮아 있습니다. 각 대학은 또 다른 이름의 네이처입니다.
+      </p>
+
+      <p>
+        논술의 개론은 교사마다 다양하지만, 입시는 반드시 객관적이고 합리적이어야
+        합니다. 닥터필리스 프로그램은 학생들뿐만 아니라 전국의 교사 분들을 위해
+        개발된 시스템입니다.
+      </p>
+
+      <p>
+        앞으로는 인문·사회·과학이 융합된 새로운 연구가 필요합니다. 닥터필리스는
+        대한민국에 더 많은 연구 주제가 나오길 소망하며, 그 길을 함께하겠습니다.
+      </p>
+
+      <p className="font-semibold">필리스 박사</p>
     </main>
   );
 }
