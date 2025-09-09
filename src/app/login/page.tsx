@@ -1,14 +1,25 @@
-"use client"; 
+// app/login/page.tsx
+"use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useSession, signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation"; 
+import { useRouter, useSearchParams } from "next/navigation";
+
+export const dynamic = "force-dynamic"; // ✅ 미리 렌더하지 말고 동적 처리
 
 export default function LoginPage() {
-  const { data: session, status } = useSession();
+  return (
+    <Suspense fallback={<div className="p-6 text-center">로그인 페이지 불러오는 중…</div>}>
+      <LoginInner />
+    </Suspense>
+  );
+}
+
+function LoginInner() {
+  const { status } = useSession();
   const router = useRouter();
   const search = useSearchParams();
-  const redirect = search?.get("redirect") ?? "/";
+  const redirect = (search?.get("redirect") ?? "/") as string;
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -25,22 +36,13 @@ export default function LoginPage() {
         </div>
 
         <div className="space-y-3">
-          <button
-            onClick={() => signIn("google", { callbackUrl: redirect })}
-            className="w-full h-11 rounded-lg border hover:bg-gray-50 transition"
-          >
+          <button onClick={() => signIn("google", { callbackUrl: redirect })} className="w-full h-11 rounded-lg border hover:bg-gray-50 transition">
             Google로 계속하기
           </button>
-          <button
-            onClick={() => signIn("naver", { callbackUrl: redirect })}
-            className="w-full h-11 rounded-lg border hover:bg-gray-50 transition"
-          >
+          <button onClick={() => signIn("naver", { callbackUrl: redirect })} className="w-full h-11 rounded-lg border hover:bg-gray-50 transition">
             네이버로 계속하기
           </button>
-          <button
-            onClick={() => signIn("kakao", { callbackUrl: redirect })}
-            className="w-full h-11 rounded-lg border hover:bg-gray-50 transition"
-          >
+          <button onClick={() => signIn("kakao", { callbackUrl: redirect })} className="w-full h-11 rounded-lg border hover:bg-gray-50 transition">
             카카오로 계속하기
           </button>
         </div>
@@ -51,4 +53,4 @@ export default function LoginPage() {
       </div>
     </main>
   );
-} 
+}
