@@ -1,6 +1,4 @@
-// src/app/payment/page.tsx
-"use client";
-
+//src/app/payment/page.tsx
 import Link from "next/link";
 
 export const metadata = {
