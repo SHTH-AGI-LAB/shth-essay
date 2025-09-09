@@ -1,101 +1,72 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useSession, signOut } from "next-auth/react";
+import { useState } from "react";
 import Link from "next/link";
 
 export default function Header() {
-  const { data: session } = useSession();
-  const [left, setLeft] = useState<number>(3);
-
-  useEffect(() => {
-    if (typeof document === "undefined") return;
-
-    const m = document.cookie.match(/(?:^|; )free_uses=(\d+)/);
-    const used = m ? parseInt(m[1], 10) : 0;
-
-    const paid = document.cookie.includes("paid=true");
-    if (paid) {
-      setLeft(Infinity);
-    } else {
-      setLeft(Math.max(0, 3 - used));
-    }
-  }, [session]);
+  const [open, setOpen] = useState(false);
 
   return (
-    <header
-      style={{
-        padding: "10px",
-        borderBottom: "1px solid #ddd",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        gap: 12,
-      }}
-    >
-      {/* Left: Logo + Nav */}
-      <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-        <Link href="/" style={{ fontWeight: 700 }}>
+    <header className="border-b bg-white">
+      <nav className="max-w-4xl mx-auto flex items-center justify-between p-4">
+        {/* 홈 버튼 */}
+        <Link href="/" className="text-xl font-bold text-blue-600">
           닥터필리스
         </Link>
 
-        <Link
-          href="/about"
-          style={{ padding: "6px 12px", border: "1px solid #ccc", borderRadius: 6 }}
-        >
-          소개
-        </Link>
-
-        <Link
-          href="/payment"
-          style={{ padding: "6px 12px", border: "1px solid #ccc", borderRadius: 6 }}
-        >
-          결제방식
-        </Link>
-
-        <Link
-          href="/refund"
-          style={{ padding: "6px 12px", border: "1px solid #ccc", borderRadius: 6 }}
-        >
-          환불정책
-        </Link>
-
-        <Link
-          href="/terms"
-          style={{ padding: "6px 12px", border: "1px solid #ccc", borderRadius: 6 }}
-        >
-          이용약관
-        </Link>
-
-        <Link
-          href="/privacy"
-          style={{ padding: "6px 12px", border: "1px solid #ccc", borderRadius: 6 }}
-        >
-          개인정보처리방침
-        </Link>
-      </div>
-
-      {/* Right: Auth */}
-      <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-        {session ? (
-          <>
-            <span>안녕하세요, {session.user?.name}님 👋</span>
-            {left !== Infinity && <span>무료 남은 횟수: {left}회</span>}
-            <button
-              onClick={() => signOut()}
-              style={{ padding: "6px 12px", border: "1px solid #ccc", borderRadius: 6 }}
-            >
-              로그아웃
-            </button>
-          </>
-        ) : (
+        {/* 데스크톱 메뉴 */}
+        <div className="hidden md:flex items-center gap-4">
+          <Link href="/about">소개</Link>
+          <Link href="/payment">결제방식</Link>
+          <Link href="/refund">환불정책</Link>
+          <Link href="/terms">이용약관</Link>
+          <Link href="/privacy">개인정보</Link>
           <Link
             href="/login"
-            style={{ padding: "6px 12px", border: "1px solid #ccc", borderRadius: 6 }}
+            className="px-3 py-1 rounded bg-blue-500 text-white"
           >
             로그인
           </Link>
-        )}
-      </div>
+        </div>
+
+        {/* 모바일 햄버거 버튼 */}
+        <button
+          aria-label="메뉴 열기"
+          className="md:hidden p-2 border rounded"
+          onClick={() => setOpen((v) => !v)}
+        >
+          ☰
+        </button>
+      </nav>
+
+      {/* 모바일 드로어 메뉴 */}
+      {open && (
+        <div className="md:hidden border-t bg-white">
+          <div className="max-w-4xl mx-auto flex flex-col p-3 gap-2">
+            <Link href="/about" onClick={() => setOpen(false)}>
+              소개
+            </Link>
+            <Link href="/payment" onClick={() => setOpen(false)}>
+              결제방식
+            </Link>
+            <Link href="/refund" onClick={() => setOpen(false)}>
+              환불정책
+            </Link>
+            <Link href="/terms" onClick={() => setOpen(false)}>
+              이용약관
+            </Link>
+            <Link href="/privacy" onClick={() => setOpen(false)}>
+              개인정보
+            </Link>
+            <Link
+              href="/login"
+              onClick={() => setOpen(false)}
+              className="px-3 py-2 rounded bg-blue-500 text-white"
+            >
+              로그인
+            </Link>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
