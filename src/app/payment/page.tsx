@@ -72,7 +72,7 @@ export default function PaymentPage() {
               👩‍🏫 교사 추천
             </span>
             <h3 className="font-bold text-lg">VIP 100회</h3>
-            <p className="text-gray-600 mt-2">장기 자기주도 학습, 최고의 가성비, 논술학원 교사활용</p>
+            <p className="text-gray-600 mt-2">자기주도 학습, 최고의 가성비, 학원교사 활용</p>
             <p className="text-xl font-bold mt-3">199,000원</p>
             <p className="text-sm text-gray-500 mb-4">(1회 1,990원)</p>
             <Link
