@@ -2,20 +2,20 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
+import { useSession, signOut } from "next-auth/react";
 export default function Header() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
-
+  const { data: session, status } = useSession();
   const goLogin = () => {
-    setOpen(false);          // 모바일 메뉴 닫기
-    router.push("/login");   // 명시적 라우팅 (클릭 막힘 이슈 우회)
+    setOpen(false);
+    router.push("/login");
   };
 
   return (
     <header className="sticky top-0 z-50 border-b bg-white/90 backdrop-blur">
       <nav className="max-w-4xl mx-auto flex items-center justify-between p-4">
-        {/* 홈 버튼 - 뱃지 스타일 */}
+        {/* 홈 버튼 */}
         <Link href="/" className="inline-flex items-center gap-2">
           <span className="text-xl font-extrabold tracking-tight text-blue-700">
             닥터필리스
@@ -25,20 +25,34 @@ export default function Header() {
           </span>
         </Link>
 
-        {/* 데스크탑 메뉴 */}
+        {/* 데스크톱 메뉴 */}
         <div className="hidden md:flex items-center gap-5">
           <Link href="/about" className="hover:underline">소개</Link>
           <Link href="/payment" className="hover:underline">결제방식</Link>
           <Link href="/refund" className="hover:underline">환불정책</Link>
           <Link href="/terms" className="hover:underline">이용약관</Link>
           <Link href="/privacy" className="hover:underline">개인정보</Link>
-          <button
-            onClick={goLogin}
-            className="px-3 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
-            aria-label="로그인 페이지로 이동"
-          >
-            로그인
-          </button>
+
+          {status === "authenticated" ? (
+            <>
+              <span className="text-gray-700">
+                안녕하세요, {session?.user?.name ?? "회원"}님~
+              </span>
+              <button
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="px-3 py-1.5 rounded-lg bg-gray-200 hover:bg-gray-300 transition"
+              >
+                로그아웃
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={goLogin}
+              className="px-3 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+            >
+              로그인
+            </button>
+          )}
         </div>
 
         {/* 모바일 햄버거 버튼 */}
@@ -60,15 +74,30 @@ export default function Header() {
             <Link href="/refund" onClick={() => setOpen(false)}>환불정책</Link>
             <Link href="/terms" onClick={() => setOpen(false)}>이용약관</Link>
             <Link href="/privacy" onClick={() => setOpen(false)}>개인정보</Link>
-            <button
-              onClick={goLogin}
-              className="mt-1 px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
-            >
-              로그인
-            </button>
+
+            {status === "authenticated" ? (
+              <>
+                <span className="text-gray-700">
+                  안녕하세요, {session?.user?.name ?? "회원"}님~
+                </span>
+                <button
+                  onClick={() => { setOpen(false); signOut({ callbackUrl: "/" }); }}
+                  className="px-3 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition"
+                >
+                  로그아웃
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => { setOpen(false); goLogin(); }}
+                className="px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+              >
+                로그인
+              </button>
+            )}
           </div>
         </div>
       )}
     </header>
   );
-} 
+}
