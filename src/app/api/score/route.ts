@@ -164,12 +164,20 @@ export async function POST(req: NextRequest) {
       data?.choices?.[0]?.message?.content ??
       data?.choices?.[0]?.message;
 
-    let parsed: any = {};
-    try {
-      parsed = typeof content === "string" ? JSON.parse(content) : content;
-    } catch {
-      parsed = { score: 0, bonus: 0, rationale: [String(content ?? "")], evidence: [] };
-    }
+    let parsed: Record<string, unknown> = {};
+try {
+  parsed =
+    typeof content === "string"
+      ? (JSON.parse(content) as Record<string, unknown>)
+      : (content as Record<string, unknown>);
+} catch {
+  parsed = {
+    score: 0,
+    bonus: 0,
+    rationale: [String(content ?? "")],
+    evidence: [],
+  };
+}
 
     // 점수 보정(안전)
     const total = uni.scale ?? 100;
@@ -188,12 +196,13 @@ export async function POST(req: NextRequest) {
     };
 
     return NextResponse.json(out, { status: 200 });
-  } catch (err: any) {
-    return NextResponse.json(
-      { error: `Scoring failed: ${err?.message ?? String(err)}` },
-      { status: 500 }
-    );
-  }
+} catch (err: unknown) {
+  const message = err instanceof Error ? err.message : String(err);
+  return NextResponse.json(
+    { error: `Scoring failed: ${message}` },
+    { status: 500 }
+  );
+}
 }
 
 export const dynamic = "force-dynamic";
