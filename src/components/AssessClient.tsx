@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { UNIVERSITIES } from "@/data/universities";
 
 type University = (typeof UNIVERSITIES)[number];
-
+type Criterion = { desc: string; weight: number };
 type Props = { slug: string };
 
 type ScoreResponse = {
@@ -27,31 +27,36 @@ function toGrade(total100: number) {
   if (total100 >= 65) return "D+";
   if (total100 >= 60) return "D";
   return "F";
-} 
+}
 
 export default function AssessClient({ slug }: Props) {
-  /** 🔹 모든 훅은 조건문 밖, 최상단에서 호출 */
+  /** 🔹 모든 훅은 최상단에서 조건 없이 호출 */
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [loadingKey, setLoadingKey] = useState<string | null>(null); // 문항 키 or "ALL"
   const [perQuestion, setPerQuestion] = useState<Record<string, ScoreResponse>>({});
   const [summary, setSummary] = useState<{ total100: number; grade: string } | null>(null);
 
-  const uni = useMemo<University | undefined>(() => {
-    return UNIVERSITIES.find((u) => u.slug === slug);
-  }, [slug]);
+  /** 선택된 대학 */
+  const uni = useMemo<University | undefined>(
+    () => UNIVERSITIES.find((u) => u.slug === slug),
+    [slug]
+  );
 
-  /** 🔹 가드는 훅 다음에 */
+  /** 문항 키 목록 (예: ["문제1","문제2"]) */
+  const questionKeys = useMemo<string[]>(
+    () => (uni ? Object.keys(uni.criteria ?? {}) : []),
+    [uni]
+  );
+
+  /** 가드(훅 다음에 배치) */
   if (!uni) {
     return <p className="p-4 text-red-500">대학 정보가 없습니다.</p>;
   }
-  const u = uni as University;
-
-  /** 🔹 문항 키 목록 (예: ["문제1","문제2"]) */
-  const questionKeys = useMemo(() => Object.keys(u.criteria ?? {}), [u.criteria]);
+  const u = uni as University; 
 
   /** 한 문항 채점 */
-  async function scoreOne(questionKey: string) {
-    const answer = answers[questionKey]?.trim() ?? "";
+  async function scoreOne(questionKey: string): Promise<void> {
+    const answer = (answers[questionKey] ?? "").trim();
     if (!answer) {
       alert(`${questionKey} 답안을 입력해주세요.`);
       return;
@@ -70,13 +75,21 @@ export default function AssessClient({ slug }: Props) {
         }),
       });
 
-      const data = (await res.json()) as ScoreResponse | { error?: string };
+      const raw = (await res.json()) as unknown;
       if (!res.ok) {
-        const msg = "error" in data && data.error ? data.error : "채점 실패";
+        const msg =
+          typeof raw === "object" &&
+          raw !== null &&
+          "error" in (raw as Record<string, unknown>)
+            ? String((raw as Record<string, unknown>).error)
+            : "채점 실패";
         throw new Error(msg);
       }
 
-      setPerQuestion((prev) => ({ ...prev, [questionKey]: data as ScoreResponse }));
+      setPerQuestion((prev) => ({
+        ...prev,
+        [questionKey]: raw as ScoreResponse,
+      }));
     } catch (err) {
       const msg = err instanceof Error ? err.message : "채점 서버 오류 발생!";
       alert(msg);
@@ -86,14 +99,14 @@ export default function AssessClient({ slug }: Props) {
   }
 
   /** 전체 문항 채점 + 가중 합산(100점 환산) */
-  async function scoreAll() {
+  async function scoreAll(): Promise<void> {
     setLoadingKey("ALL");
     setSummary(null);
     try {
       const next: Record<string, ScoreResponse> = { ...perQuestion };
 
       for (const q of questionKeys) {
-        const a = answers[q]?.trim() ?? "";
+        const a = (answers[q] ?? "").trim();
         if (!a) continue;
 
         const res = await fetch("/api/score", {
@@ -106,12 +119,17 @@ export default function AssessClient({ slug }: Props) {
           }),
         });
 
-        const data = (await res.json()) as ScoreResponse | { error?: string };
+        const raw = (await res.json()) as unknown;
         if (!res.ok) {
-          const msg = "error" in data && data.error ? data.error : `채점 실패 (${q})`;
+          const msg =
+            typeof raw === "object" &&
+            raw !== null &&
+            "error" in (raw as Record<string, unknown>)
+              ? String((raw as Record<string, unknown>).error)
+              : `채점 실패 (${q})`;
           throw new Error(msg);
         }
-        next[q] = data as ScoreResponse;
+        next[q] = raw as ScoreResponse;
       }
 
       setPerQuestion(next);
@@ -119,7 +137,7 @@ export default function AssessClient({ slug }: Props) {
       // 가중 합산: 각 문항 (점수/만점) * weight% → 총 100점 환산
       let total100 = 0;
       for (const q of questionKeys) {
-        const criterion = (u.criteria as Partial<Record<string, { desc: string; weight: number }>>)[q];
+        const criterion = (u.criteria as Partial<Record<string, Criterion>>)[q];
         const weightPct = Number(criterion?.weight ?? 0); // 20, 40 등
         const r = next[q];
         if (!r) continue;
@@ -147,7 +165,7 @@ export default function AssessClient({ slug }: Props) {
       <p className="text-gray-700 mb-4">만점: {u.scale}점</p>
 
       {questionKeys.map((문제) => {
-        const criterion = (u.criteria as Partial<Record<string, { desc: string; weight: number }>>)[문제];
+        const criterion = (u.criteria as Partial<Record<string, Criterion>>)[문제];
         const desc = criterion?.desc ?? "";
         const weight = criterion?.weight ?? 0;
         const r = perQuestion[문제];
