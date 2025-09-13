@@ -29,7 +29,7 @@ export const UNIVERSITIES = [
     scale: 100,
     gradingType: "100점제",
     criteria: {
-      문제1: { desc: "비교, 대조 내용이해", weight: 30 },
+      문제1: { desc: "비교.대조 내용이해", weight: 30 },
       문제2: { desc: "관점 선택형 논술, 자신있게 비판하라", weight: 70 },
     },
     bonus: "사회적 의의, 미래지향적 사고",
@@ -41,7 +41,7 @@ export const UNIVERSITIES = [
     gradingType: "1000점제",
     criteria: {
       문제1: { desc: "다면적 사고, 표현능력, 어휘력", weight: 40 },
-      문제2: { desc: "통합적 논술, 종합적 자고, 어휘력", weight: 60 },
+      문제2: { desc: "통합적 논술, 종합적 사고, 어휘력", weight: 60 },
     },
     bonus: "논리력, 구성, 합리적 사고,성찰적 적용, 반론과 재반론",
   },

@@ -3,22 +3,26 @@
 
 import { useMemo, useState } from "react";
 import { UNIVERSITIES } from "@/data/universities";
+import { useSession } from "next-auth/react";
 
 type University = (typeof UNIVERSITIES)[number];
 type Criterion = { desc: string; weight: number };
 type Props = { slug: string };
 
- type ScoreResponse = {
+type ScoreResponse = {
   apiVersion?: string;
   university: string;
   questionId: string;
-  score: number;
+  score: number;                // 절대점수(uni.scale 기준)
   bonus: number;
   rationale: string[];
   evidence: string[];
   overall?: string;
   edits?: { original: string; revision: string }[];
-  model?: string;
+  // 서버가 함께 내려주는 과금/남은 횟수 정보(없을 수도 있음)
+  usageCount?: number;          // 지금까지 사용한 횟수
+  remaining?: number;           // 남은 무료 횟수
+  planType?: "free" | "paid";
 };
 
 function toGrade(total100: number) {
@@ -34,7 +38,7 @@ function toGrade(total100: number) {
 }
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
- function weightedMax(u: University, weightPct: number) {
+function weightedMax(u: University, weightPct: number) {
   const max = u.scale || 100;
   return Math.round(max * (weightPct / 100));
 }
@@ -45,27 +49,50 @@ function weightedScore(u: University, weightPct: number, absoluteScore: number) 
 }
 
 export default function AssessClient({ slug }: Props) {
+  // 입력/상태
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [perQuestion, setPerQuestion] = useState<Record<string, ScoreResponse>>({});
   const [summary, setSummary] = useState<{ total100: number; grade: string } | null>(null);
 
+  // 남은 무료 횟수 표시용(서버 응답에 있으면 갱신)
+  const [usageCount, setUsageCount] = useState<number | null>(null);
+  const [remaining, setRemaining] = useState<number | null>(null);
+  const [planType, setPlanType] = useState<"free" | "paid" | null>(null);
+
+  // 로그인 세션에서 이메일 추출
+  const { data: session } = useSession();
+  const userEmail = session?.user?.email || "";
+
+  // 대학/문항
   const uni = useMemo<University | undefined>(() => UNIVERSITIES.find((u) => u.slug === slug), [slug]);
   const questionKeys = useMemo<string[]>(() => (uni ? Object.keys(uni.criteria ?? {}) : []), [uni]);
 
   if (!uni) return <p className="p-4 text-red-500">대학 정보가 없습니다.</p>;
   const u = uni as University;
 
-  /** 한 문항 채점 */
+  /** 한 문항 채점 (서버에 userEmail 함께 전달) */
   async function scoreOne(questionKey: string, a: string): Promise<ScoreResponse | null> {
     const res = await fetch("/api/score", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ university: slug, questionId: questionKey, answer: a }),
+      body: JSON.stringify({
+        university: slug,
+        questionId: questionKey,
+        answer: a,
+        userEmail, // ← 추가: 서버에서 과금/카운트 추적
+      }),
     });
-    const raw = await res.json();
-    if (!res.ok) throw new Error(typeof raw?.error === "string" ? raw.error : "채점 실패");
-    return raw as ScoreResponse;
+    const raw = (await res.json()) as unknown as ScoreResponse | { error: string };
+    if (!res.ok) throw new Error((raw as any)?.error || "채점 실패");
+
+    // 사용량 정보가 있으면 UI에 반영
+    const r = raw as ScoreResponse;
+    if (typeof r.usageCount === "number") setUsageCount(r.usageCount);
+    if (typeof r.remaining === "number") setRemaining(r.remaining);
+    if (r.planType === "free" || r.planType === "paid") setPlanType(r.planType);
+
+    return r;
   }
 
   /** 입력된 문항만 순차 채점(버튼 1개) */
@@ -89,17 +116,17 @@ export default function AssessClient({ slug }: Props) {
         } catch (e) {
           const msg = e instanceof Error ? e.message : String(e);
           if (/429|rate/i.test(msg)) {
-            alert("요청이 너무 빨라 잠시 대기합니다… 다시 시도할게요.");
+            alert("요청이 빠릅니다. 잠시 기다린 뒤 계속합니다…");
           } else {
             alert(`채점 실패 (${q}): ${msg}`);
           }
         }
-        await sleep(900); // ← 429 방지: 문항 사이 딜레이
+        await sleep(900); // 429 방지
       }
 
       setPerQuestion(next);
 
-      // 가중 합산
+      // 가중 합산(100 환산)
       let total100 = 0;
       for (const q of questionKeys) {
         const criterion = (u.criteria as Partial<Record<string, Criterion>>)[q];
@@ -119,8 +146,19 @@ export default function AssessClient({ slug }: Props) {
 
   return (
     <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-2">{u.name} ({u.gradingType})</h1>
-      <p className="text-gray-700 mb-4">만점: {u.scale}점</p>
+      <h1 className="text-2xl font-bold mb-2">
+        {u.name} ({u.gradingType})
+      </h1>
+      <p className="text-gray-700 mb-2">만점: {u.scale}점</p>
+
+      {/* 남은 무료 횟수/플랜 안내 */}
+      <p className="text-sm text-gray-600 mb-6">
+        {planType === "paid"
+          ? "에어래빗 프로: 무제한 사용"
+          : typeof usageCount === "number" && typeof remaining === "number"
+          ? `무료 체험 사용: ${usageCount}회 (남은 ${remaining}회)`
+          : "로그인 후 무료 체험 횟수가 표시됩니다."}
+      </p>
 
       {questionKeys.map((문제) => {
         const criterion = (u.criteria as Partial<Record<string, Criterion>>)[문제];

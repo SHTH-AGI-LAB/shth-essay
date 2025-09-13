@@ -1,17 +1,14 @@
+// src/app/api/score/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { UNIVERSITIES as UNIVERSITIES_RAW } from "../../../data/universities";
-import crypto from "crypto";
+import { supabaseAdmin } from "../../../lib/db";
 
-/** ===== 설정값 ===== */
-const API_VERSION = "score-api v3";          // 배포 확인용 태그
+/** ===== 설정 ===== */
+const API_VERSION = "score-api v4-db";
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 const OPENAI_MODEL = process.env.OPENAI_MODEL ?? "gpt-4o-mini";
-
-/** 무료 체험 제한 */
-const COOKIE_NAME = "ar_usage_v1";           // 쿠키 키
-const FREE_TRIAL_LIMIT = 3;                  // 무료 허용 횟수
-const TRIAL_WINDOW_DAYS = 30;                // 윈도우(일)
-const PAYWALL_SECRET = process.env.PAYWALL_SECRET ?? ""; // HMAC 비밀(반드시 .env에 설정 권장)
+const FREE_TRIAL_LIMIT = Number(process.env.FREE_TRIAL_LIMIT ?? "3") || 3; // 환경변수 or 기본값 3
+const TRIAL_WINDOW_DAYS = 30;
 
 /** ===== 타입 ===== */
 type Criterion = { desc: string; weight: number };
@@ -30,7 +27,7 @@ type OpenAIResponse = { choices?: OpenAIChoice[] };
 
 const UNIVERSITIES = UNIVERSITIES_RAW as unknown as UniversityEntry[];
 
-/** ===== 유틸: criteria 접근 ===== */
+/** ===== 유틸 ===== */
 function getCriterion(u: UniversityEntry, key: string): Criterion | undefined {
   const map = u.criteria as Record<string, Criterion | undefined>;
   return map[key];
@@ -44,15 +41,9 @@ function findUniversity(slugOrName: string): UniversityEntry | null {
   return null;
 }
 
-/** "문제1" / "1" / "q1" → 실제 키("문제1") */
-function normalizeQuestionKey(
-  u: UniversityEntry,
-  questionId: string
-): string | null {
+function normalizeQuestionKey(u: UniversityEntry, questionId: string): string | null {
   const raw = String(questionId).trim();
-
   if (getCriterion(u, raw)) return raw;
-
   const m = raw.match(/^q?(\d+)$/i);
   if (m) {
     const guess = `문제${Number(m[1])}`;
@@ -66,7 +57,7 @@ function formatWeight(weight?: number) {
   return `${weight}%`;
 }
 
-/** ===== 프롬프트 생성(5문장 첨삭 강제) ===== */
+/** ===== 프롬프트 (첨삭 5문장 강제) ===== */
 function buildPrompt(params: {
   university: UniversityEntry;
   questionKey: string;
@@ -75,7 +66,6 @@ function buildPrompt(params: {
   questionText?: string;
 }) {
   const { university, questionKey, criterion, answer, questionText } = params;
-
   const lines: string[] = [
     "당신은 한국 대학 논술 첨삭 전문가입니다.",
     "점수와 평가 근거를 제시하세요.",
@@ -111,163 +101,165 @@ function buildPrompt(params: {
   return lines.filter(Boolean).join("\n\n");
 }
 
-/** ===== 서명 쿠키 유틸 ===== */
-type UsagePayload = { c: number; exp: number }; // count, expiry(unixtime ms)
+/** ===== DB 로직: 사용자 사용량 ===== */
+type UsageRow = {
+  email: string;
+  usage_count: number;
+  plan_type: "free" | "paid";
+  window_end: string | null; // ISO
+};
 
-function b64u(str: string) {
-  return Buffer.from(str).toString("base64url");
-}
-function ub64u(str: string) {
-  return Buffer.from(str, "base64url").toString("utf8");
-}
-function sign(input: string) {
-  if (!PAYWALL_SECRET) return ""; // 서명 비활성(개발용)
-  return crypto.createHmac("sha256", PAYWALL_SECRET).update(input).digest("base64url");
-}
+function now() { return Date.now(); }
+function daysFromNow(n: number) { return now() + n * 24 * 60 * 60 * 1000; }
 
-function encodeUsage(u: UsagePayload): string {
-  const payload = JSON.stringify(u);
-  const p = b64u(payload);
-  const s = sign(p);
-  return s ? `${p}.${s}` : p; // 서명 없으면 payload만 (개발용)
-}
+async function getOrInitUsage(email: string): Promise<UsageRow> {
+  const { data: row, error } = await supabaseAdmin
+    .from("user_usage")
+    .select("email, usage_count, plan_type, window_end")
+    .eq("email", email)
+    .maybeSingle();
 
-function decodeUsage(v: string | undefined | null): UsagePayload | null {
-  if (!v) return null;
-  const [p, s] = v.split(".");
-  try {
-    if (PAYWALL_SECRET) {
-      const expected = sign(p);
-      if (s !== expected) return null; // 위조
+  if (error) throw new Error(`DB read error: ${error.message}`);
+
+  if (!row) {
+    const newRow: UsageRow = {
+      email,
+      usage_count: 0,
+      plan_type: "free",
+      window_end: new Date(daysFromNow(TRIAL_WINDOW_DAYS)).toISOString(),
+    };
+    const { error: upErr } = await supabaseAdmin
+      .from("user_usage")
+      .upsert(newRow, { onConflict: "email" });
+    if (upErr) throw new Error(`DB init error: ${upErr.message}`);
+    return newRow;
+  }
+
+  if (row.plan_type === "free") {
+    const expired =
+      !row.window_end || new Date(row.window_end).getTime() <= now();
+    if (expired) {
+      const resetRow: UsageRow = {
+        email: row.email,
+        usage_count: 0,
+        plan_type: "free",
+        window_end: new Date(daysFromNow(TRIAL_WINDOW_DAYS)).toISOString(),
+      };
+      const { error: rstErr } = await supabaseAdmin
+        .from("user_usage")
+        .upsert(resetRow, { onConflict: "email" });
+      if (rstErr) throw new Error(`DB reset window error: ${rstErr.message}`);
+      return resetRow;
     }
-    const obj = JSON.parse(ub64u(p)) as UsagePayload;
-    if (typeof obj.c !== "number" || typeof obj.exp !== "number") return null;
-    return obj;
-  } catch {
+  }
+
+  return row as UsageRow;
+}
+
+async function incrementUsage(email: string): Promise<UsageRow | null> {
+  const { data: current, error: readErr } = await supabaseAdmin
+    .from("user_usage")
+    .select("email, usage_count, plan_type, window_end")
+    .eq("email", email)
+    .maybeSingle();
+
+  if (readErr || !current) {
+    console.error("읽기 오류:", readErr);
     return null;
   }
-}
 
-function now() {
-  return Date.now();
-}
-function daysFromNow(n: number) {
-  return now() + n * 24 * 60 * 60 * 1000;
-}
+  const { data: updated, error: updateErr } = await supabaseAdmin
+    .from("user_usage")
+    .update({
+      usage_count: (current.usage_count ?? 0) + 1,
+    })
+    .eq("email", email)
+    .select("email, usage_count, plan_type, window_end")
+    .maybeSingle();
 
-/** 요청별 사용량 읽기 */
-function readUsage(req: NextRequest): UsagePayload {
-  const v = req.cookies.get(COOKIE_NAME)?.value;
-  const decoded = decodeUsage(v);
-  const fresh: UsagePayload =
-    decoded && decoded.exp > now()
-      ? decoded
-      : { c: 0, exp: daysFromNow(TRIAL_WINDOW_DAYS) };
-  return fresh;
-}
+  if (updateErr) {
+    console.error("업데이트 오류:", updateErr);
+    return null;
+  }
 
-/** 응답에 사용량 기록 쿠키 세팅 */
-function withUsageCookie(res: NextResponse, usage: UsagePayload) {
-  const value = encodeUsage(usage);
-  res.cookies.set({
-    name: COOKIE_NAME,
-    value,
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    secure: true,
-    expires: new Date(usage.exp),
-  });
-  return res;
+  return updated as UsageRow;
 }
 
 /** ===== API 핸들러 ===== */
 export async function POST(req: NextRequest) {
   try {
-    // 1) 사용량 확인 (쿠키 기반)
-    const usage = readUsage(req);
-    if (usage.c >= FREE_TRIAL_LIMIT) {
-      const res = NextResponse.json(
-        {
-          error: "PAYWALL_REQUIRED",
-          message: `무료 체험 ${FREE_TRIAL_LIMIT}회를 모두 사용하였습니다.`,
-          remaining: 0,
-          apiVersion: API_VERSION,
-        },
-        { status: 402 } // Payment Required
-      );
-      return withUsageCookie(res, usage);
-    }
-
-    // 2) 바디 파싱
     const body = await req.json().catch(() => ({}));
     const {
       university: uniInput,
       questionId,
       answer,
       questionText,
+      userEmail,
     }: {
       university?: string;
       questionId?: string;
       answer?: string;
       questionText?: string;
+      userEmail?: string;
     } = body ?? {};
 
-    if (!uniInput || !questionId || !answer) {
-      const res = NextResponse.json(
-        { error: "Missing required fields: university, questionId, answer" },
+    if (!uniInput || !questionId || !answer || !userEmail) {
+      return NextResponse.json(
+        { error: "Missing required fields: university, questionId, answer, userEmail" },
         { status: 400 }
       );
-      return withUsageCookie(res, usage);
     }
 
-    // 3) 대학/문항 유효성
+    const usage = await getOrInitUsage(userEmail);
+
+    if (usage.plan_type !== "paid" && usage.usage_count >= FREE_TRIAL_LIMIT) {
+      return NextResponse.json(
+        {
+          error: "PAYWALL_REQUIRED",
+          message: `무료 체험 ${FREE_TRIAL_LIMIT}회를 모두 사용하였습니다.`,
+          usageCount: usage.usage_count,
+          remaining: 0,
+          planType: usage.plan_type,
+          apiVersion: API_VERSION,
+        },
+        { status: 402 }
+      );
+    }
+
     const uni = findUniversity(uniInput);
     if (!uni) {
-      const res = NextResponse.json(
-        { error: `Unknown university: ${uniInput}` },
-        { status: 404 }
-      );
-      return withUsageCookie(res, usage);
+      return NextResponse.json({ error: `Unknown university: ${uniInput}` }, { status: 404 });
     }
 
-    const qKey = normalizeQuestionKey(uni, questionId);
+    const qKey = normalizeQuestionKey(uni, questionId!);
     if (!qKey) {
-      const res = NextResponse.json(
+      return NextResponse.json(
         { error: `Unknown questionId for ${uni.name}: ${questionId}` },
         { status: 404 }
       );
-      return withUsageCookie(res, usage);
     }
 
     const criterion = getCriterion(uni, qKey);
     if (!criterion) {
-      const res = NextResponse.json(
+      return NextResponse.json(
         { error: `No criterion defined for ${uni.name} / ${qKey}` },
         { status: 404 }
       );
-      return withUsageCookie(res, usage);
     }
 
-    // 4) 프롬프트 생성
     const prompt = buildPrompt({
       university: uni,
       questionKey: qKey,
       criterion,
-      answer,
+      answer: answer!,
       questionText,
     });
 
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      const res = NextResponse.json(
-        { error: "Missing OPENAI_API_KEY environment variable" },
-        { status: 500 }
-      );
-      return withUsageCookie(res, usage);
+      return NextResponse.json({ error: "Missing OPENAI_API_KEY" }, { status: 500 });
     }
 
-    // 5) OpenAI 호출
     const resAI = await fetch(OPENAI_API_URL, {
       method: "POST",
       headers: {
@@ -287,17 +279,12 @@ export async function POST(req: NextRequest) {
 
     if (!resAI.ok) {
       const text = await resAI.text();
-      const res = NextResponse.json(
-        { error: `OpenAI error: ${resAI.status} ${text}` },
-        { status: 502 }
-      );
-      return withUsageCookie(res, usage);
+      return NextResponse.json({ error: `OpenAI error: ${resAI.status} ${text}` }, { status: 502 });
     }
 
     const data = (await resAI.json()) as OpenAIResponse;
     const content = data?.choices?.[0]?.message?.content;
 
-    // 6) 안전 파싱
     let parsed: Record<string, unknown> = {};
     try {
       parsed =
@@ -315,7 +302,6 @@ export async function POST(req: NextRequest) {
       };
     }
 
-    // 7) 정규화
     const total = uni.scale ?? 100;
     const scoreRaw = Number(parsed.score ?? 0);
     const score = Number.isFinite(scoreRaw) ? Math.max(0, Math.min(total, scoreRaw)) : 0;
@@ -343,43 +329,47 @@ export async function POST(req: NextRequest) {
       : [];
 
     if (edits.length < 1) {
-      const firstSentence =
-        String(answer).split(/[.!?。\n]/)[0]?.trim().slice(0, 120) || "원문 예시";
+      const firstSentence = String(answer).split(/[.!?。\n]/)[0]?.trim().slice(0, 120) || "원문 예시";
       edits = [
         {
           original: firstSentence,
-          revision:
-            `${firstSentence} — 핵심 논지와 비교근거(자료·통계·사례)를 한 문장으로 명확히 덧붙여 논리적 인과를 드러냅니다.`,
+          revision: `${firstSentence} — 핵심 논지와 비교근거(자료·통계·사례)를 한 문장으로 명확히 덧붙여 논리적 인과를 드러냅니다.`,
         },
       ];
     }
 
-    // 8) 사용량 1 증가 + 쿠키 저장
-    const nextUsage: UsagePayload = { c: usage.c + 1, exp: usage.exp };
-    const out = {
-      apiVersion: API_VERSION,
-      university: uni.slug,
-      questionId: qKey,
-      score,
-      bonus,
-      rationale: rationaleArr,
-      evidence: evidenceArr,
-      overall,
-      edits,
-      model: OPENAI_MODEL,
-      remaining: Math.max(0, FREE_TRIAL_LIMIT - nextUsage.c),
-    };
+    let updatedUsage = usage;
+    if (usage.plan_type === "free") {
+      updatedUsage = (await incrementUsage(usage.email)) ?? usage;
+    }
 
-    const res = NextResponse.json(out, { status: 200 });
-    return withUsageCookie(res, nextUsage);
+    const remaining =
+      updatedUsage.plan_type === "paid"
+        ? null
+        : Math.max(0, FREE_TRIAL_LIMIT - updatedUsage.usage_count);
 
+    return NextResponse.json(
+      {
+        apiVersion: API_VERSION,
+        university: uni.slug,
+        questionId: qKey,
+        score,
+        bonus,
+        rationale: rationaleArr,
+        evidence: evidenceArr,
+        overall,
+        edits,
+        model: OPENAI_MODEL,
+        usageCount: updatedUsage.usage_count,
+        remaining,
+        planType: updatedUsage.plan_type,
+        windowEnd: updatedUsage.window_end,
+      },
+      { status: 200 }
+    );
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
-    const res = NextResponse.json(
-      { error: `Scoring failed: ${message}`, apiVersion: API_VERSION },
-      { status: 500 }
-    );
-    return res;
+    return NextResponse.json({ error: `Scoring failed: ${message}`, apiVersion: API_VERSION }, { status: 500 });
   }
 }
 
