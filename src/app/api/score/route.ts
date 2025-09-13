@@ -1,34 +1,41 @@
 import { NextRequest, NextResponse } from "next/server";
-import { UNIVERSITIES } from "../../../data/universities"; 
+import { UNIVERSITIES as UNIVERSITIES_RAW } from "../../../data/universities";
 
-/** 데이터 타입 */
+/** ===== 타입 ===== */
 type Criterion = { desc: string; weight: number };
-export type UniversityEntry = {
+type UniversityEntry = {
   name: string;
   slug: string;
-  scale: number;
-  gradingType: string;
+  scale: number;          // 100 / 1000 등
+  gradingType: string;    // "100점제" / "1000점제"
   criteria: Partial<Record<string, Criterion>>;
   bonus?: string;
 };
 
-/** 안전한 criteria 접근 헬퍼 */
+type Edit = { original: string; revision: string };
+type OpenAIChoice = { message?: { content?: string } };
+type OpenAIResponse = { choices?: OpenAIChoice[] };
+
+const UNIVERSITIES = UNIVERSITIES_RAW as unknown as UniversityEntry[]; // 타입 고정
+const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
+const OPENAI_MODEL = process.env.OPENAI_MODEL ?? "gpt-4o-mini";
+const API_VERSION = "score-api v2";
+
+/** ===== 유틸 ===== */
 function getCriterion(u: UniversityEntry, key: string): Criterion | undefined {
   const map = u.criteria as Record<string, Criterion | undefined>;
   return map[key];
-}
+} 
 
-/** 배열에서 대학 찾기 (slug 또는 name 모두 허용) */
 function findUniversity(slugOrName: string): UniversityEntry | null {
-  const key = String(slugOrName).trim();
-  return (
-    UNIVERSITIES.find((u: UniversityEntry) => u.slug === key) ??
-    UNIVERSITIES.find((u: UniversityEntry) => u.name === key) ??
-    null
-  );
+const key = String(slugOrName).trim();
+  for (const u of UNIVERSITIES) {
+    if (u.slug === key || u.name === key) return u;
+  }
+  return null;
 }
 
-/** "문제1" / "1" / "q1" 등 → 실제 키("문제1")로 정규화 */
+/** "문제1" / "1" / "q1" → 실제 키("문제1") */
 function normalizeQuestionKey(
   u: UniversityEntry,
   questionId: string
@@ -47,13 +54,13 @@ function normalizeQuestionKey(
   return null;
 }
 
-/** weight(20,40) → 퍼센트 그대로 사용. 만점 scale과 별개 */
+/** weight(20,40) → 퍼센트 문자열 */
 function formatWeight(weight?: number) {
   if (typeof weight !== "number") return "—";
   return `${weight}%`;
 }
 
-/** 프롬프트 생성 */
+/** ===== 프롬프트 생성 ===== */
 function buildPrompt(params: {
   university: UniversityEntry;
   questionKey: string;
@@ -65,7 +72,7 @@ function buildPrompt(params: {
 
   const lines: string[] = [
     "당신은 한국 대학 논술 첨삭 전문가입니다.",
-    "수험생의 답안을 평가하고, 점수/근거와 함께, 구체적인 문장 수정 예시를 '원문 → 수정문' 형식으로 반드시 1개 이상 제시하세요.",
+    "점수/근거를 제시하고, 문장 수정 예시는 '원문 → 수정문' 형식으로 반드시 1개 이상 제시하세요.",
     "총평(Overall)은 2~3문장으로 간결하게 작성하세요.",
     `대학: ${university.name} (slug: ${university.slug})`,
     `평가 체계: ${university.gradingType} (만점 ${university.scale})`,
@@ -81,38 +88,14 @@ function buildPrompt(params: {
       "rationale": string[],
       "evidence": string[],
       "overall": string,
-      "edits": [
-        { "original": string, "revision": string }
-      ]
+      "edits": [{ "original": string, "revision": string }]
     }`,
-    `규칙:
-- 반드시 JSON만 출력.
-- edits 배열은 문항당 최소 1개 포함.
-- original: 학생 원문 일부, revision: 개선된 문장.`,
+    "규칙: 반드시 JSON만 출력. edits는 최소 1개 포함.",
   ];
   return lines.filter(Boolean).join("\n\n");
 }
 
-/** 🔐 OpenAI 설정 */
-const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
-const OPENAI_MODEL = process.env.OPENAI_MODEL ?? "gpt-4o-mini";
-
-/** OpenAI 응답 타입(필요한 필드만) */
-type OpenAIChoice = { message?: { content?: string } };
-type OpenAIResponse = { choices?: OpenAIChoice[] };
-
-/** 모델이 약속한 출력 형태(선언적) */
-type ParsedDraft = {
-  score?: unknown;
-  bonus?: unknown;
-  rationale?: unknown;
-  evidence?: unknown;
-  overall?: unknown;
-  edits?: unknown;
-};
-
-type Edit = { original: string; revision: string };
-
+/** ===== API 핸들러 ===== */
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}));
@@ -170,7 +153,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 🧠 OpenAI 호출
+    // OpenAI 호출
     const res = await fetch(OPENAI_API_URL, {
       method: "POST",
       headers: {
@@ -180,10 +163,7 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         model: OPENAI_MODEL,
         messages: [
-          {
-            role: "system",
-            content: "You are a strict but fair Korean university essay grader.",
-          },
+          { role: "system", content: "You are a strict but fair Korean university essay grader." },
           { role: "user", content: prompt },
         ],
         temperature: 0.2,
@@ -200,17 +180,15 @@ export async function POST(req: NextRequest) {
     }
 
     const data = (await res.json()) as OpenAIResponse;
-    const content =
-      data?.choices?.[0]?.message?.content ??
-      (data?.choices?.[0]?.message as unknown as string | undefined);
+    const content = data?.choices?.[0]?.message?.content;
 
     // 안전 파싱
-    let parsed: ParsedDraft = {};
+    let parsed: Record<string, unknown> = {};
     try {
       parsed =
         typeof content === "string"
-          ? (JSON.parse(content) as ParsedDraft)
-          : ((content ?? {}) as unknown as ParsedDraft);
+          ? (JSON.parse(content) as Record<string, unknown>)
+          : ((content ?? {}) as unknown as Record<string, unknown>);
     } catch {
       parsed = {
         score: 0,
@@ -222,30 +200,31 @@ export async function POST(req: NextRequest) {
       };
     }
 
-    // 정규화
-    const total = uni.scale ?? 100;
+const total = uni.scale ?? 100;
 
-    const scoreRaw = Number(parsed.score ?? 0);
-    const score = Number.isFinite(scoreRaw)
-      ? Math.max(0, Math.min(total, scoreRaw))
-      : 0;
+const scoreRaw = Number(parsed.score ?? 0);
+const score = Number.isFinite(scoreRaw)
+  ? Math.max(0, Math.min(total, scoreRaw))
+  : 0;
 
-    const bonus = Number(parsed.bonus ?? 0) || 0;
+const bonus = Number(parsed.bonus ?? 0) || 0;
 
-    const rationale = Array.isArray(parsed.rationale)
-      ? (parsed.rationale as unknown[]).map((x) => String(x))
-      : parsed.rationale != null
-      ? [String(parsed.rationale)]
-      : [];
+const rationaleArr =
+  Array.isArray(parsed.rationale)
+    ? (parsed.rationale as unknown[]).map((x) => String(x))
+    : parsed.rationale != null
+    ? [String(parsed.rationale)]
+    : [];
 
-    const evidence = Array.isArray(parsed.evidence)
-      ? (parsed.evidence as unknown[]).map((x) => String(x))
-      : [];
+const evidenceArr =
+  Array.isArray(parsed.evidence)
+    ? (parsed.evidence as unknown[]).map((x) => String(x))
+    : [];
 
-    const overall =
-      typeof parsed.overall === "string" ? parsed.overall : "";
+const overall =
+  typeof parsed.overall === "string" ? parsed.overall : "";
 
-    // edits: 최소 1개 보장 로직
+    // edits 정규화 + 최소 1개 보장
     let edits: Edit[] = Array.isArray(parsed.edits)
       ? (parsed.edits as unknown[]).map((e) => ({
           original: String((e as { original?: unknown }).original ?? ""),
@@ -254,23 +233,32 @@ export async function POST(req: NextRequest) {
       : [];
 
     if (edits.length < 1) {
-      // 백업용 더미(혹시 모델이 미이행 시 대비)
-      edits = [{ original: "원문 예시", revision: "수정 예시" }];
+      const firstSentence =
+        String(answer).split(/[.!?。\n]/)[0]?.trim().slice(0, 120) || "원문 예시";
+      edits = [
+        {
+          original: firstSentence,
+          revision:
+            `${firstSentence} — 핵심 논지와 비교근거(자료·통계·사례)를 한 문장으로 명확히 덧붙여 논리적 인과를 드러냅니다.`,
+        },
+      ];
     }
 
-    const out = {
-      university: uni.slug,
-      questionId: qKey,
-      score,
-      bonus,
-      rationale,
-      evidence,
-      overall,
-      edits,
-      model: OPENAI_MODEL,
-    };
-
-    return NextResponse.json(out, { status: 200 });
+   return NextResponse.json(
+  {
+    apiVersion: API_VERSION,
+    university: uni.slug,
+    questionId: qKey,
+    score,
+    bonus,
+    rationale: rationaleArr,
+    evidence: evidenceArr,
+    overall,
+    edits,
+    model: OPENAI_MODEL,
+  },
+  { status: 200 }
+);
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
     return NextResponse.json(
@@ -280,4 +268,4 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export const dynamic = "force-dynamic"; 
+export const dynamic = "force-dynamic";
