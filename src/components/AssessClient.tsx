@@ -84,7 +84,7 @@ export default function AssessClient({ slug }: Props) {
       }),
     });
     const raw = (await res.json()) as unknown as ScoreResponse | { error: string };
-    if (!res.ok) throw new Error((raw as any)?.error || "채점 실패");
+    if (!res.ok) throw new Error((raw as { error?: string }).error || "채점 실패");
 
     // 사용량 정보가 있으면 UI에 반영
     const r = raw as ScoreResponse;
