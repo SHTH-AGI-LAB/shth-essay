@@ -72,8 +72,9 @@ function buildPrompt(params: {
 
   const lines: string[] = [
     "당신은 한국 대학 논술 첨삭 전문가입니다.",
-    "점수/근거를 제시하고, 문장 수정 예시는 '원문 → 수정문' 형식으로 반드시 1개 이상 제시하세요.",
-    "총평(Overall)은 2~3문장으로 간결하게 작성하세요.",
+    "점수와 평가 근거를 제시하세요.",
+    "첨삭 문장은 반드시 5개 이상 제시하며, 고급 어휘력과 논리적 연결어를 활용해 원문보다 세련되게 수정하세요.",
+    "총평(Overall)은 3~4문장으로 작성하고, 마지막에는 학생이 바로 적용할 수 있는 글쓰기 전략 1가지를 제안하세요.",
     `대학: ${university.name} (slug: ${university.slug})`,
     `평가 체계: ${university.gradingType} (만점 ${university.scale})`,
     `문항: ${questionKey}`,
@@ -88,9 +89,18 @@ function buildPrompt(params: {
       "rationale": string[],
       "evidence": string[],
       "overall": string,
-      "edits": [{ "original": string, "revision": string }]
+      "edits": [
+        { "original": string, "revision": string },
+        { "original": string, "revision": string },
+        { "original": string, "revision": string },
+        { "original": string, "revision": string },
+        { "original": string, "revision": string }
+      ]
     }`,
-    "규칙: 반드시 JSON만 출력. edits는 최소 1개 포함.",
+    "규칙:",
+    "- JSON만 출력.",
+    "- edits 배열은 반드시 5개 이상 포함.",
+    "- revision은 고급 어휘와 학술적 표현을 사용.",
   ];
   return lines.filter(Boolean).join("\n\n");
 }
