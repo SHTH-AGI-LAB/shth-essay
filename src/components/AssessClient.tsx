@@ -7,14 +7,17 @@ type University = (typeof UNIVERSITIES)[number];
 type Criterion = { desc: string; weight: number };
 type Props = { slug: string };
 
+// 서버 응답 타입 (신규 필드는 optional로 두어도 안전)
 type ScoreResponse = {
-  university: string;   // slug
-  questionId: string;   // "문제1"
-  score: number;        // 절대점수 (uni.scale 기준)
+  university: string;    // slug
+  questionId: string;    // "문제1"
+  score: number;         // 절대점수 (uni.scale 기준)
   bonus: number;
   rationale: string[];
   evidence: string[];
-  model: string;
+  model?: string;        // 화면에는 표시하지 않음
+  suggestion?: string;   // 개선 요약 (신규)
+  improved_excerpt?: string; // 수정 예시 (신규)
 };
 
 function toGrade(total100: number) {
@@ -27,6 +30,17 @@ function toGrade(total100: number) {
   if (total100 >= 65) return "D+";
   if (total100 >= 60) return "D";
   return "F";
+}
+
+/** 가중 만점/점수 계산 헬퍼 */
+function weightedMax(u: University, weightPct: number) {
+  const max = u.scale || 100;
+  return Math.round(max * (weightPct / 100)); // 예: 1000 * 0.4 = 400
+}
+function weightedScore(u: University, weightPct: number, absoluteScore: number) {
+  const max = u.scale || 100;
+  const ratio = max > 0 ? absoluteScore / max : 0;
+  return Math.round(ratio * (max * (weightPct / 100)));
 }
 
 export default function AssessClient({ slug }: Props) {
@@ -52,7 +66,7 @@ export default function AssessClient({ slug }: Props) {
   if (!uni) {
     return <p className="p-4 text-red-500">대학 정보가 없습니다.</p>;
   }
-  const u = uni as University; 
+  const u = uni as University;
 
   /** 한 문항 채점 */
   async function scoreOne(questionKey: string): Promise<void> {
@@ -69,7 +83,7 @@ export default function AssessClient({ slug }: Props) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          university: slug,        // ex: "kyunghee"
+          university: slug,        // ex: "konkuk"
           questionId: questionKey, // ex: "문제1"
           answer,                  // 해당 문항 답안
         }),
@@ -112,11 +126,7 @@ export default function AssessClient({ slug }: Props) {
         const res = await fetch("/api/score", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            university: slug,
-            questionId: q,
-            answer: a,
-          }),
+          body: JSON.stringify({ university: slug, questionId: q, answer: a }),
         });
 
         const raw = (await res.json()) as unknown;
@@ -167,8 +177,12 @@ export default function AssessClient({ slug }: Props) {
       {questionKeys.map((문제) => {
         const criterion = (u.criteria as Partial<Record<string, Criterion>>)[문제];
         const desc = criterion?.desc ?? "";
-        const weight = criterion?.weight ?? 0;
+        const weight = Number(criterion?.weight ?? 0); // 20, 40 ...
         const r = perQuestion[문제];
+
+        // 가중 만점/점수 계산
+        const maxW = weightedMax(u, weight);
+        const weighted = r ? weightedScore(u, weight, r.score) : 0;
 
         return (
           <div key={문제} className="mb-6 border-b pb-4">
@@ -194,19 +208,38 @@ export default function AssessClient({ slug }: Props) {
               >
                 {loadingKey === 문제 ? "채점 중..." : "이 문항 AI 채점"}
               </button>
+
+              {/* 점수 표시는 가중 환산 기준으로 (모델명은 비노출) */}
               {r && (
                 <span className="text-sm text-gray-700">
-                  → 점수 {r.score} / {u.scale} (모델: {r.model})
+                  → 점수 {weighted} / {maxW}
                 </span>
               )}
             </div>
 
+            {/* 첨삭 코멘트 + 개선 요약 + 수정 예시 */}
             {r?.rationale?.length ? (
               <div className="mt-3 bg-gray-50 border rounded p-3">
                 <h3 className="font-semibold mb-1">첨삭 코멘트</h3>
                 {r.rationale.map((c, i) => (
                   <p key={i} className="text-sm">- {c}</p>
                 ))}
+
+                {r.suggestion ? (
+                  <div className="mt-3">
+                    <h4 className="font-semibold">개선 요약</h4>
+                    <p className="text-sm whitespace-pre-wrap">{r.suggestion}</p>
+                  </div>
+                ) : null}
+
+                {r.improved_excerpt ? (
+                  <div className="mt-3">
+                    <h4 className="font-semibold">수정 예시</h4>
+                    <blockquote className="text-sm italic bg-white border rounded p-3 whitespace-pre-wrap">
+                      {r.improved_excerpt}
+                    </blockquote>
+                  </div>
+                ) : null}
               </div>
             ) : null}
           </div>
@@ -241,4 +274,4 @@ export default function AssessClient({ slug }: Props) {
       )}
     </div>
   );
-}
+} 
