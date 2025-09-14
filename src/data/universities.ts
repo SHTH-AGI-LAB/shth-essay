@@ -54,7 +54,7 @@ export const UNIVERSITIES = [
       문제1: { desc: "선택적 사고, 비판력, 해결 방안", weight: 50 },
       문제2: { desc: "논증력, 타당성 증명, 창의력", weight: 50 },
     },
-    bonus: "톰합적 사고, 논증의 다양성, 창의력, 어휘력",
+    bonus: "통합적 사고, 논증의 다양성, 창의력, 어휘력",
   },
   {
     name: "광운대",
@@ -73,8 +73,8 @@ export const UNIVERSITIES = [
     scale: 100,
     gradingType: "100점제",
     criteria: {
-      문제1: { desc: "여러 문제를 문단 바꿔 입력하세요. 제시문 이해, 요약", weight: 55 },
-      문제2: { desc: "여러 문제를 문단 바꿔 입력하세요. 자료의 이해와 활용능력", weight: 45 },
+      문제1: { desc: "소문제를 문단 바꿔 입력하세요. 제시문 이해, 요약", weight: 55 },
+      문제2: { desc: "소문제를 문단 바꿔 입력하세요. 자료의 이해와 활용능력", weight: 45 },
     },
     bonus: "6문제 시간분배, 논리력",
   },
@@ -118,9 +118,9 @@ export const UNIVERSITIES = [
     scale: 100,
     gradingType: "100점제",
     criteria: {
-      문제1: { desc: "여러 문제를 문단 바꿔 입력하세요. 제시문 이해, 문제와 해결방안", weight: 30 },
-      문제2: { desc: "여러 문제를 문단 바꿔 입력하세요. 비판적 사고와 해결방안", weight: 30 },
-      문제3: { desc: "여러 문제를 문단 바꿔 입력하세요. 사회적 의의, 해결방안", weight: 40 },
+      문제1: { desc: "소문제를 문단 바꿔 입력하세요. 제시문 이해, 문제와 해결방안", weight: 30 },
+      문제2: { desc: "소문제를 문단 바꿔 입력하세요. 비판적 사고와 해결방안", weight: 30 },
+      문제3: { desc: "소문제를 문단 바꿔 입력하세요. 사회적 의의, 해결방안", weight: 40 },
     },
     bonus: "문장력, 어휘력, 거시적 관점",
   },
@@ -141,8 +141,8 @@ export const UNIVERSITIES = [
     scale: 100,
     gradingType: "100점제",
     criteria: {
-      문제1: { desc: "2문제 문단바꿈으로 입력, 제시문 이해, 문제와 해결방안", weight: 45 },
-      문제2: { desc: "2문제 문단바꿈으로 입력, 자료이해와 활용, 해결방안", weight: 55 },
+      문제1: { desc: "소문제 문단바꿈으로 입력, 제시문 이해, 문제와 해결방안", weight: 45 },
+      문제2: { desc: "소문제 문단바꿈으로 입력, 자료이해와 활용, 해결방안", weight: 55 },
     },
     bonus: "동어반복 피하기, 간결한 문장",
   },
@@ -208,7 +208,7 @@ export const UNIVERSITIES = [
     scale: 100,
     gradingType: "100점제",
     criteria: {
-      문제1: { desc: "2문제 문단바꿈으로 입력, 내용 이해, 예문 활용 가능", weight: 50 },
+      문제1: { desc: "소문제 문단바꿈으로 입력, 내용 이해, 예문 활용 가능", weight: 50 },
       문제2: { desc: "두 입장 요약, 선택적 주장을 중심으로 전개", weight: 50 },
     },
     bonus: "구체적인 예증, 해결방안",
@@ -221,7 +221,7 @@ export const UNIVERSITIES = [
     criteria: {
       문제1: { desc: "비교.대조, 내용이해, 분석력", weight: 30 },
       문제2: { desc: "사실적 독해, 사회적 의의, 추론능력", weight: 30 },
-      문제3: { desc: "2문제 문단바꿈으로 입력, 자료분석, 추론능력", weight: 40 },
+      문제3: { desc: "소문제 문단바꿈으로 입력, 자료분석, 추론능력", weight: 40 },
     },
     bonus: "기서결 구성, 표지어 활용, 명확한 단락 나눔, 간결한 문장",
   },
@@ -248,8 +248,8 @@ export const UNIVERSITIES = [
     scale: 100,
     gradingType: "100점제",
     criteria: {
-      문제1: { desc: "2문제 문단바꿈으로 입력, 비교.대조, 세밀한 분석", weight: 50 },
-      문제2: { desc: "2문제 문단바꿈으로 입력, 수학적사고, 결정방향성, 도표 다면적 해석, 확장적 개념어 활용", weight: 50 },
+      문제1: { desc: "소문제 문단바꿈으로 입력, 비교.대조, 세밀한 분석", weight: 50 },
+      문제2: { desc: "소문제 문단바꿈으로 입력, 수학적사고, 결정방향성, 도표 다면적 해석, 확장적 개념어 활용", weight: 50 },
     },
     bonus: "인문사회학 융합적 사고, 표와 그래프를 활용하는 논문형식",
   },
@@ -293,8 +293,18 @@ export const UNIVERSITIES = [
     scale: 100,
     gradingType: "100점제",
     criteria: {
-      문제1: { desc: "제시문 비교.대조, 사례와 유기적 연결", weight: 40 },
+      문제1: { desc: "제시문 비교.대조, 사례와 유기적 연결", weight: 100 },
       },
     bonus: "어휘력, 문장력, 유기적 연결",
+  },
+  {
+    name: "ALL대",
+    slug: "all",
+    scale: 100,
+    gradingType: "100점제",
+    criteria: {
+      문제1: { desc: "문장력, 어휘력, 표현력", weight: 100 },
+      },
+    bonus: "유기적 연결",
   },
 ];
