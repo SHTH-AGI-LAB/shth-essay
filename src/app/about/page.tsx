@@ -1,7 +1,7 @@
 // app/about/page.tsx
 export default function AboutPage() {
   return (
-    <main className="max-w-3xl mx-auto p-8 space-y-6">
+    <main className="max-w-3xl mx-auto p-8 space-y-6 text-justify leading-relaxed">
       <h1 className="text-3xl font-bold">소개</h1>
 
       <p>
