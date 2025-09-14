@@ -12,6 +12,7 @@ const UNIVERSITIES = [
   { name: "고려대", slug: "korea" },
   { name: "광운대", slug: "kw" },
   { name: "단국대", slug: "dankook" },
+  { name: "덕성여대", slug: "duksung" },
   { name: "동국대", slug: "dongguk" },
   { name: "부산대", slug: "pusan" },
   { name: "서강대", slug: "sogang" },
