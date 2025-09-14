@@ -79,6 +79,17 @@ export const UNIVERSITIES = [
     bonus: "6문제 시간분배, 논리력",
   },
   {
+    name: "덕성여대",
+    slug: "duksung",
+    scale: 200,
+    gradingType: "200점제",
+    criteria: {
+      문제1: { desc: "이해력, 논증력, 표현력", weight: 55 },
+      문제2: { desc: "이해력, 논증력, 표현력", weight: 45 },
+    },
+    bonus: "어휘력",
+  },
+  {
   name: "동국대",
   slug: "dongguk",
   scale: 100,
