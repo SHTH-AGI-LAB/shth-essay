@@ -220,8 +220,7 @@ export async function POST(req: NextRequest) {
           usageCount: usage.usage_count,
           remaining: 0,
           planType: usage.plan_type,
-          apiVersion: API_VERSION,
-        },
+          },
         { status: 402 }
       );
     }
@@ -349,8 +348,7 @@ export async function POST(req: NextRequest) {
         : Math.max(0, FREE_TRIAL_LIMIT - updatedUsage.usage_count);
 
     return NextResponse.json(
-      {
-        apiVersion: API_VERSION,
+      { 
         university: uni.slug,
         questionId: qKey,
         score,
