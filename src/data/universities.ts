@@ -84,8 +84,8 @@ export const UNIVERSITIES = [
     scale: 200,
     gradingType: "200점제",
     criteria: {
-      문제1: { desc: "이해력, 논증력, 표현력", weight: 55 },
-      문제2: { desc: "이해력, 논증력, 표현력", weight: 45 },
+      문제1: { desc: "이해력, 논증력, 표현력", weight: 50 },
+      문제2: { desc: "이해력, 논증력, 표현력", weight: 50 },
     },
     bonus: "어휘력",
   },
@@ -100,6 +100,17 @@ export const UNIVERSITIES = [
     문제3: { desc: "비교·대조, 논리 전개, 문장력", weight: 40 },
   },
   bonus: "간결한 문장",
+  },
+  {
+  name: "동덕여대",
+  slug: "dongduk",
+  scale: 200,
+  gradingType: "200점제",
+  criteria: {
+    문제1: { desc: "내용이해, 문장 구조, 표현력", weight: 60 },
+    문제2: { desc: "내용이해, 문장력, 표현력, 사회적 의의(확장적사고)", weight: 40 },
+  },
+  bonus: "어휘력",
   },
   {
     name: "부산대",
