@@ -1,10 +1,41 @@
-//src/app/payment/page.tsx
-import Link from "next/link";
+// src/app/payment/page.tsx
+"use client";
 
 export const metadata = {
   title: "결제방식 | Dr-phyllis",
   description: "닥터필리스 결제수단 및 유의사항 안내",
 };
+
+// 간단한 타입 선언(위젯 v2 요구 형태)
+type TossPayRequest = {
+  orderId: string;
+  orderName: string;
+  amount: number;
+  successUrl: string;
+  failUrl: string;
+  customerName?: string;
+};
+
+async function pay(amount: number, orderName: string) {
+  const { loadPaymentWidget } = await import("@tosspayments/payment-widget-sdk");
+
+  const widget = await loadPaymentWidget(
+    process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY!,
+    "test-customer-id"
+  );
+
+  const params: TossPayRequest = {
+    orderId: "order-" + Date.now(),
+    orderName,
+    amount, // 숫자 그대로
+    successUrl: `${window.location.origin}/payment/success`,
+    failUrl: `${window.location.origin}/payment/fail`,
+    customerName: "테스트 사용자",
+  };
+
+  // 타입 충돌 우회
+  await (widget as any).requestPayment(params as any);
+}
 
 export default function PaymentPage() {
   return (
@@ -26,7 +57,7 @@ export default function PaymentPage() {
         </p>
       </section>
 
-      {/* 상품 유형 */}
+      {/* 상품 카드 */}
       <section className="space-y-3 mb-8">
         <h2 className="text-lg font-semibold">상품 유형</h2>
         <p className="text-gray-700">
@@ -41,12 +72,12 @@ export default function PaymentPage() {
             <p className="text-gray-600 mt-2">부담 없이 시작하기 좋은 입문용</p>
             <p className="text-xl font-bold mt-3">29,000원</p>
             <p className="text-sm text-gray-500 mb-4">(1회 2,900원)</p>
-            <Link
-              href="/checkout?plan=10"
+            <button
+              onClick={() => pay(29000, "스탠다드 10회")}
               className="block w-full text-center bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
             >
-              구매하기
-            </Link>
+              결제하기
+            </button>
           </div>
 
           {/* 30회 */}
@@ -58,29 +89,29 @@ export default function PaymentPage() {
             <p className="text-gray-600 mt-2">꾸준히 학습하며 성과를 내는 베스트셀러</p>
             <p className="text-xl font-bold mt-3">79,000원</p>
             <p className="text-sm text-gray-500 mb-4">(1회 약 2,633원)</p>
-            <Link
-              href="/checkout?plan=30"
+            <button
+              onClick={() => pay(79000, "프리미엄 30회")}
               className="block w-full text-center bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
             >
-              구매하기
-            </Link>
+              결제하기
+            </button>
           </div>
 
           {/* 100회 */}
           <div className="border rounded-lg p-4 shadow-sm hover:shadow-md transition relative">
             <span className="absolute -top-3 left-3 bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded">
-              👩‍🏫 교사 추천
+              👩🏫 교사 추천
             </span>
             <h3 className="font-bold text-lg">VIP 100회</h3>
             <p className="text-gray-600 mt-2">자기주도 학습, 최고의 가성비, 학원교사 활용</p>
             <p className="text-xl font-bold mt-3">199,000원</p>
             <p className="text-sm text-gray-500 mb-4">(1회 1,990원)</p>
-            <Link
-              href="/checkout?plan=100"
+            <button
+              onClick={() => pay(199000, "VIP 100회")}
               className="block w-full text-center bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
             >
-              구매하기
-            </Link>
+              결제하기
+            </button>
           </div>
         </div>
       </section>
@@ -117,4 +148,4 @@ export default function PaymentPage() {
       </section>
     </main>
   );
-}
+} 
