@@ -53,7 +53,8 @@ export default function RefundPage() {
       <section>
         <h2 className="text-lg font-semibold mb-2">5. 사업자 정보</h2>
         <div>
-          <p>상호명: 주식회사 에어래빗 AIrabbit Inc.</p>
+          <p>서비스명: 닥터필리스 대입논술AI첨삭</p>
+          <p>사업자명: 주식회사 에어래빗 AIrabbit Inc.</p>
           <p>사업자등록번호: 536-86-03683</p>
           <p>대표자명: 주헌영</p>
           <p>사업장 주소: 광주광역시 남구 행암도동길 43-11 1층</p>
