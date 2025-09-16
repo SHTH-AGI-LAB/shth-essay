@@ -90,7 +90,7 @@ export default function PaymentPage() {
         <h2 className="text-lg font-semibold">서비스 제공(이용) 기간</h2>
         <ul className="list-disc pl-6 space-y-1 text-gray-700">
           <li>단건 첨삭권: 결제 후 <b>7일 이내</b> 초안 제출, 제출일로부터 <b>최대 5일 이내</b> 피드백 제공</li>
-          <li>패키지(다회권): 결제일로부터 <b>6개월 이내</b> 사용</li>
+          <li>패키지(다회권): 결제일로부터 <b>12개월 이내</b> 사용</li>
         </ul>
       </section>
 

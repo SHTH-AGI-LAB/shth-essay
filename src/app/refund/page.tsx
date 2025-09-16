@@ -41,7 +41,7 @@ export default function RefundPage() {
       <section className="mb-8">
         <h2 className="text-lg font-semibold mb-2">4. 환불 접수 방법</h2>
         <ul className="list-disc pl-6">
-          <li>이메일: <b>support@dr-phyllis.com</b></li>
+          <li>이메일: <b>dr-phyllis@naver.com</b></li>
           <li>대표번호: <b>062-651-0922 / 010-2734-5261</b></li>
           <li>접수 시: 주문번호, 결제일, 성함, 연락처, 사유를 함께 보내주세요.</li>
         </ul>
@@ -53,10 +53,10 @@ export default function RefundPage() {
       <section>
         <h2 className="text-lg font-semibold mb-2">5. 사업자 정보</h2>
         <div>
-          <p>상호명: 닥터필리스</p>
-          <p>사업자등록번호: 159-91-00334</p>
-          <p>대표자명: 김명화</p>
-          <p>사업장 주소: 광주광역시 남구 행암도동길 43-11</p>
+          <p>상호명: 주식회사 에어래빗 AIrabbit Inc.</p>
+          <p>사업자등록번호: 536-86-03683</p>
+          <p>대표자명: 주헌영</p>
+          <p>사업장 주소: 광주광역시 남구 행암도동길 43-11 1층</p>
           <p>고객센터: 062-651-0922 / 010-2734-5261</p>
         </div>
       </section>
