@@ -57,7 +57,7 @@ export default function PrivacyPage() {
       <section className="mb-6">
         <h2 className="font-semibold">7. 문의처</h2>
         <ul className="list-disc pl-6">
-          <li>이메일: support@dr-phyllis.com</li>
+          <li>이메일: dr-phyllis@naver.com</li>
           <li>대표번호: 062-651-0922 / 010-2734-5261</li>
         </ul>
       </section>

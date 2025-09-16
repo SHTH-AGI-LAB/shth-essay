@@ -45,7 +45,10 @@ function LoginInner() {
           <button onClick={() => signIn("kakao", { callbackUrl: redirect })} className="w-full h-11 rounded-lg border hover:bg-gray-50 transition">
             카카오로 계속하기
           </button>
-        </div>
+          <button onClick={() => signIn("test-account", { callbackUrl: "/" })}>
+            테스트 계정으로 계속하기
+          </button>
+        </div> 
 
         <p className="mt-4 text-xs text-gray-500 text-center">
           로그인은 암호를 저장하지 않으며, 승인된 OAuth 제공자만 사용합니다.

@@ -99,7 +99,7 @@ export default function PaymentPage() {
         <h2 className="text-lg font-semibold">문의 / 고객센터</h2>
         <ul className="list-disc pl-6 space-y-1 text-gray-700">
           <li>대표번호: 062-651-0922 / 010-2734-5261</li>
-          <li>이메일: support@dr-phyllis.com</li>
+          <li>이메일: dr-phyllis@naver.com</li>
           <li>운영시간: 평일 10:00~18:00 (주말/공휴일 휴무)</li>
         </ul>
       </section>
@@ -108,10 +108,10 @@ export default function PaymentPage() {
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">사업자 정보</h2>
         <div className="text-gray-700">
-          <p>상호명: 닥터필리스</p>
-          <p>사업자등록번호: 159-91-00334</p>
-          <p>대표자명: 김명화</p>
-          <p>사업장 주소: 광주광역시 남구 행암도동길 43-11</p>
+          <p>상호명: 주식회사 에어래빗 AIrabbit Inc.</p>
+          <p>사업자등록번호: 536-86-03683</p>
+          <p>대표자명: 주헌영</p>
+          <p>사업장 주소: 광주광역시 남구 행암도동길 43-11, 1층</p>
         </div>
       </section>
     </main>
