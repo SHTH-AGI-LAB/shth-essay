@@ -1,19 +1,8 @@
-type FailSearchParams = {
-  message?: string;
-};
-
-export default function FailPage({
-  searchParams,
-}: {
-  searchParams?: FailSearchParams;
-}) {
-  const reason = searchParams?.message ?? "사용자 취소/오류";
-
+export default function FailPage() {
   return (
-    <main className="mx-auto max-w-md p-8">
-      <h1 className="text-xl font-bold mb-4">결제 실패</h1>
-      <p className="mb-2">사유: {reason}</p>
-      <p className="text-sm text-gray-600">다시 시도해 주세요.</p>
+    <main className="max-w-xl mx-auto p-10">
+      <h1 className="text-2xl font-bold">결제 실패</h1>
+      <p className="mt-4">결제가 실패했습니다. 다시 시도해주세요.</p>
     </main>
   );
 }

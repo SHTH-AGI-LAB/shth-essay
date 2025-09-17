@@ -1,43 +1,23 @@
-// src/app/payment/page.tsx
-"use client";
+"use client"; 
+
+import { useState } from "react";
+import PaymentWidgetClient from "@/components/PaymentWidgetClient";
 
 export const metadata = {
   title: "결제방식 | Dr-phyllis",
   description: "닥터필리스 결제수단 및 유의사항 안내",
 };
 
-// 간단한 타입 선언(위젯 v2 요구 형태)
-type TossPayRequest = {
-  orderId: string;
-  orderName: string;
-  amount: number;
-  successUrl: string;
-  failUrl: string;
-  customerName?: string;
-};
-
-async function pay(amount: number, orderName: string) {
-  const { loadPaymentWidget } = await import("@tosspayments/payment-widget-sdk");
-
-  const widget = await loadPaymentWidget(
-    process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY!,
-    "test-customer-id"
-  );
-
-  const params: TossPayRequest = {
-    orderId: "order-" + Date.now(),
-    orderName,
-    amount, // 숫자 그대로
-    successUrl: `${window.location.origin}/payment/success`,
-    failUrl: `${window.location.origin}/payment/fail`,
-    customerName: "테스트 사용자",
-  };
-
-  // 타입 충돌 우회
-  await (widget as any).requestPayment(params as any);
-}
+type Plan = { label: string; price: number };
+const PLANS: Plan[] = [
+  { label: "스탠다드 10회", price: 29000 },
+  { label: "프리미엄 30회", price: 79000 },
+  { label: "VIP 100회",    price: 199000 },
+];
 
 export default function PaymentPage() {
+  const [selected, setSelected] = useState<Plan | null>(null);
+
   return (
     <main className="mx-auto max-w-3xl p-6 sm:p-10">
       <h1 className="text-2xl font-bold mb-6">결제 방식 안내</h1>
@@ -47,13 +27,11 @@ export default function PaymentPage() {
         <h2 className="text-lg font-semibold">지원 결제수단</h2>
         <ul className="list-disc pl-6 space-y-1 text-gray-700">
           <li>신용/체크카드 (국내 주요 카드사)</li>
-          <li>카카오페이</li>
-          <li>네이버페이</li>
-          <li>토스페이</li>
+          <li>카카오페이 · 네이버페이 · 토스페이</li>
           <li>삼성페이 (지원 단말기 한정)</li>
         </ul>
         <p className="text-sm text-gray-500">
-          ※ 결제수단은 순차 오픈될 수 있으며, 심사 진행 상황에 따라 일부 결제는 한시적으로 비활성화될 수 있습니다.
+          ※ 결제수단은 심사 진행 상황에 따라 순차 오픈됩니다.
         </p>
       </section>
 
@@ -66,54 +44,30 @@ export default function PaymentPage() {
         </p>
 
         <div className="grid gap-6 md:grid-cols-3 mt-6">
-          {/* 10회 */}
-          <div className="border rounded-lg p-4 shadow-sm hover:shadow-md transition">
-            <h3 className="font-bold text-lg">스탠다드 10회</h3>
-            <p className="text-gray-600 mt-2">부담 없이 시작하기 좋은 입문용</p>
-            <p className="text-xl font-bold mt-3">29,000원</p>
-            <p className="text-sm text-gray-500 mb-4">(1회 2,900원)</p>
-            <button
-              onClick={() => pay(29000, "스탠다드 10회")}
-              className="block w-full text-center bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
-            >
-              결제하기
-            </button>
-          </div>
-
-          {/* 30회 */}
-          <div className="border rounded-lg p-4 shadow-sm hover:shadow-md transition relative">
-            <span className="absolute -top-3 left-3 bg-yellow-400 text-xs font-semibold px-2 py-1 rounded">
-              ⭐ 가장 인기 많은 상품
-            </span>
-            <h3 className="font-bold text-lg">프리미엄 30회</h3>
-            <p className="text-gray-600 mt-2">꾸준히 학습하며 성과를 내는 베스트셀러</p>
-            <p className="text-xl font-bold mt-3">79,000원</p>
-            <p className="text-sm text-gray-500 mb-4">(1회 약 2,633원)</p>
-            <button
-              onClick={() => pay(79000, "프리미엄 30회")}
-              className="block w-full text-center bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
-            >
-              결제하기
-            </button>
-          </div>
-
-          {/* 100회 */}
-          <div className="border rounded-lg p-4 shadow-sm hover:shadow-md transition relative">
-            <span className="absolute -top-3 left-3 bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded">
-              👩🏫 교사 추천
-            </span>
-            <h3 className="font-bold text-lg">VIP 100회</h3>
-            <p className="text-gray-600 mt-2">자기주도 학습, 최고의 가성비, 학원교사 활용</p>
-            <p className="text-xl font-bold mt-3">199,000원</p>
-            <p className="text-sm text-gray-500 mb-4">(1회 1,990원)</p>
-            <button
-              onClick={() => pay(199000, "VIP 100회")}
-              className="block w-full text-center bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
-            >
-              결제하기
-            </button>
-          </div>
+          {PLANS.map((p) => (
+            <div key={p.label} className={`border rounded-lg p-4 shadow-sm hover:shadow-md transition ${selected?.label === p.label ? "ring-2 ring-indigo-500" : ""}`}>
+              <h3 className="font-bold text-lg">{p.label}</h3>
+              <p className="text-gray-600 mt-2">
+                {p.label === "스탠다드 10회" && "부담 없이 시작하기 좋은 입문용"}
+                {p.label === "프리미엄 30회" && "꾸준히 학습하며 성과를 내는 베스트셀러"}
+                {p.label === "VIP 100회" && "자기주도 학습 · 학원/교사 활용"}
+              </p>
+              <p className="text-xl font-bold mt-3">
+                {p.price.toLocaleString()}원
+              </p>
+              <button
+                onClick={() => setSelected(p)}
+                className="mt-4 block w-full text-center bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
+              >
+                선택하기
+              </button>
+            </div>
+          ))}
         </div>
+
+        {selected && (
+          <PaymentWidgetClient amount={selected.price} orderName={selected.label} />
+        )}
       </section>
 
       {/* 서비스 제공 기간 */}
@@ -139,7 +93,7 @@ export default function PaymentPage() {
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">사업자 정보</h2>
         <div className="text-gray-700">
-          <p>서비스명: 닥터필리스 대입논술AI첨삭 </p>
+          <p>서비스명: 닥터필리스 대입논술AI첨삭</p>
           <p>사업자명: 주식회사 에어래빗 AIrabbit Inc.</p>
           <p>사업자등록번호: 536-86-03683</p>
           <p>대표자명: 주헌영</p>
@@ -148,4 +102,4 @@ export default function PaymentPage() {
       </section>
     </main>
   );
-} 
+}
