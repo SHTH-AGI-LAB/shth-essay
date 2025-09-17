@@ -1,65 +1,63 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { loadPaymentWidget, PaymentWidgetInstance } from "@tosspayments/tosspayments-sdk";
+import { useEffect, useState } from "react";
+import { loadPaymentWidget, type PaymentWidgetInstance } from "@tosspayments/payment-widget-sdk";
 
 type Props = {
-  amount: number;          // 결제 금액(원)
-  orderName: string;       // 주문명
+  amount: number;     // 예: 29000 | 79000 | 199000
+  orderName: string;  // 예: "스탠다드 10회"
 };
 
 export default function PaymentWidgetClient({ amount, orderName }: Props) {
-  const methodsRef = useRef<HTMLDivElement>(null);
-  const agreeRef = useRef<HTMLDivElement>(null);
   const [widget, setWidget] = useState<PaymentWidgetInstance | null>(null);
 
-  // 위젯 초기화 & 영역 렌더링
   useEffect(() => {
     let mounted = true;
 
     (async () => {
-      const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY!;
-      const customerKey = "test-customer-id"; // 샌드박스 고정 ID
+      const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
+      if (!clientKey) {
+        console.error("❗NEXT_PUBLIC_TOSS_CLIENT_KEY가 설정되지 않았어요 (.env.local 확인)");
+        return;
+      }
 
-      const w = await loadPaymentWidget(clientKey, customerKey);
+      // 1) 위젯 로드
+      const w = await loadPaymentWidget(clientKey, "ANONYMOUS");
       if (!mounted) return;
 
-      setWidget(w);
+      // 2) 결제수단/약관 UI 렌더 (CSS 셀렉터 사용)
+      await w.renderPaymentMethods("#payment-methods", { value: amount });
+      await w.renderAgreement("#agreements");
 
-      // 결제수단 / 약관 영역 렌더링
-      await w.renderPaymentMethods(
-        methodsRef.current!,
-        { value: amount, currency: "KRW" },
-        { variantKey: "DEFAULT" }
-      );
-      await w.renderAgreement(agreeRef.current!);
+      setWidget(w);
     })();
 
-    return () => {
-      mounted = false;
-    };
+    return () => { mounted = false; };
   }, [amount]);
 
-  async function handlePay() {
+  const onPay = async () => {
     if (!widget) return;
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
 
+    // V2: amount는 렌더/세팅으로 관리 → requestPayment에 넣지 않음
     await widget.requestPayment({
-      orderId: "order-" + Date.now(),
+      orderId: `order-${Date.now()}`,
       orderName,
-      amount: { value: amount, currency: "KRW" },
-      successUrl: `${window.location.origin}/payment/success`,
-      failUrl: `${window.location.origin}/payment/fail`,
-      customerName: "테스트 사용자",
+      successUrl: `${origin}/success`,
+      failUrl: `${origin}/fail`,
     });
-  }
+  };
 
   return (
-    <div className="mt-6 space-y-4">
-      <div ref={methodsRef} />
-      <div ref={agreeRef} />
+    <div>
+      {/* 셀렉터 기준 렌더 */}
+      <div id="payment-methods" />
+      <div id="agreements" className="mt-4" />
+
       <button
-        onClick={handlePay}
-        className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700"
+        type="button"
+        onClick={onPay}
+        className="mt-6 px-4 py-2 rounded bg-blue-600 text-white"
       >
         결제하기
       </button>

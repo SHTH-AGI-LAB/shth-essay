@@ -1,8 +1,15 @@
-export default function SuccessPage() {
+export default function SuccessPage({ searchParams }: { searchParams: any }) {
+  const { paymentType, orderId, paymentKey, amount } = searchParams || {};
   return (
-    <main className="max-w-xl mx-auto p-10">
-      <h1 className="text-2xl font-bold">결제 성공</h1>
-      <p className="mt-4">샌드박스 환경에서 결제가 성공 처리되었습니다.</p>
+    <main className="max-w-xl mx-auto p-6">
+      <h1 className="text-xl font-semibold mb-4">결제 성공</h1>
+      <ul className="space-y-1 text-sm">
+        <li>paymentType: {paymentType}</li>
+        <li>orderId: {orderId}</li>
+        <li>paymentKey: {paymentKey}</li>
+        <li>amount: {amount}</li>
+      </ul>
+      <p className="mt-4 text-gray-500">※ 이 화면을 캡처해서 PPT에 넣어주세요.</p>
     </main>
   );
 }

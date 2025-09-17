@@ -1,8 +1,14 @@
-export default function FailPage() {
+export default function FailPage({ searchParams }: { searchParams: any }) {
+  const { code, message, orderId } = searchParams || {};
   return (
-    <main className="max-w-xl mx-auto p-10">
-      <h1 className="text-2xl font-bold">결제 실패</h1>
-      <p className="mt-4">결제가 실패했습니다. 다시 시도해주세요.</p>
+    <main className="max-w-xl mx-auto p-6">
+      <h1 className="text-xl font-semibold mb-4">결제 실패</h1>
+      <ul className="space-y-1 text-sm">
+        <li>code: {code}</li>
+        <li>message: {message}</li>
+        <li>orderId: {orderId}</li>
+      </ul>
+      <p className="mt-4 text-gray-500">※ 이 화면도 캡처해서 PPT에 넣어주세요.</p>
     </main>
   );
 }
