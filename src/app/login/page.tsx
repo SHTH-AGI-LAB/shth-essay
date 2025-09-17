@@ -46,7 +46,7 @@ function LoginInner() {
             카카오로 계속하기
           </button>
           <button onClick={() => signIn("test-account", { callbackUrl: "/" })}>
-            테스트 계정으로 계속하기
+            테스트 계정으로 계속하기 ➡️아이디: 1004@happy.com , 비번: 1004happy
           </button>
         </div> 
 
