@@ -1,5 +1,12 @@
-export default function FailPage({ searchParams }: { searchParams: any }) {
+type FailParams = {
+  code?: string;
+  message?: string;
+  orderId?: string;
+};
+
+export default function FailPage({ searchParams }: { searchParams?: FailParams }) {
   const { code, message, orderId } = searchParams || {};
+
   return (
     <main className="max-w-xl mx-auto p-6">
       <h1 className="text-xl font-semibold mb-4">결제 실패</h1>

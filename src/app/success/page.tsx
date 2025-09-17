@@ -1,5 +1,13 @@
-export default function SuccessPage({ searchParams }: { searchParams: any }) {
+type SuccessParams = {
+  paymentType?: string;
+  orderId?: string;
+  paymentKey?: string;
+  amount?: string;
+};
+
+export default function SuccessPage({ searchParams }: { searchParams?: SuccessParams }) {
   const { paymentType, orderId, paymentKey, amount } = searchParams || {};
+
   return (
     <main className="max-w-xl mx-auto p-6">
       <h1 className="text-xl font-semibold mb-4">결제 성공</h1>
