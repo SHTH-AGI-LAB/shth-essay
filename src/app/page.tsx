@@ -49,7 +49,7 @@ export default function Home() {
             className="mb-3 h-44 sm:h-48 w-auto"
           />
           <p className="mt-2 text-gray-700 text-sm sm:text-base">
-            대입논술 첨삭 채점 총평 PDF 인쇄까지
+            주식회사 에어래빗에서 만든 학교별 맞춤 AI첨삭
           </p>
         </div>
 
@@ -86,12 +86,12 @@ export default function Home() {
           {/* 사업자 정보 (심사용) */}
           <div className="mt-6 text-xs text-gray-500 leading-5">
             <p>닥터필리스 대입논술AI첨삭</p>
-            
+
             <p>사업자명: 주식회사 에어래빗 AIrabbit Inc.</p>
             <p>사업자등록번호: 536-86-03683</p>
             <p>대표자명: 주헌영</p>
             <p>사업장 주소: 광주광역시 남구 행암도동길 43-11, 1층</p>
-            <p>대표번호: 062-651-0922 / 010-2734-5261</p>
+            <p>대표번호: 062-651-0922 / 010-3217-8192</p>
           </div>
 
           <div className="mt-4 text-xs text-gray-400">
