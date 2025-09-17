@@ -1,8 +1,8 @@
 // src/app/payment/PaymentWidgetClient.tsx
 "use client";
 
-import { useEffect } from "react";
-import { loadPaymentWidget } from "@tosspayments/payment-widget-sdk";
+import { useEffect, useRef } from "react";
+import { loadPaymentWidget, PaymentWidgetInstance } from "@tosspayments/payment-widget-sdk";
 
 export default function PaymentWidgetClient() {
   useEffect(() => {
