@@ -49,7 +49,7 @@ export default function Home() {
             className="mb-3 h-44 sm:h-48 w-auto"
           />
           <p className="mt-2 text-gray-700 text-sm sm:text-base">
-            주식회사 에어래빗에서 만든 학교별 맞춤 AI첨삭
+            주식회사 에어래빗에서 만든 학교별 채점기준 코딩 AI첨삭기
           </p>
         </div>
 
