@@ -71,29 +71,7 @@ export default function Home() {
         {/* 후기 슬라이드 */}
         <Testimonials />
 
-        {/* 테스트 상품 (토스 심사용) */}
-        <section className="mt-20 max-w-2xl mx-auto rounded-lg bg-white shadow p-8 text-center border border-indigo-300">
-          <h2 className="text-xl font-bold text-gray-900 mb-4 text-indigo-600">
-            대입논술 AI 첨삭 1회권 (테스트용)
-          </h2>
-          <p className="text-gray-600 mb-6">
-            본 상품은 토스페이먼츠 입점 심사를 위한 테스트 상품입니다.<br />
-            실제 결제가 이루어지지 않습니다.
-          </p>
-
-          {/* 가격 표시 */}
-          <div className="text-lg font-semibold text-indigo-600 mb-6">
-            1,000원
-          </div>
-
-          {/* 결제 버튼 */}
-          <PayButton
-            amount={1000}
-            orderName="대입논술 AI 첨삭 1회권 (테스트)"
-          />
-        </section>
-
-        {/* 푸터 */}
+       {/* 푸터 */}
         <footer className="mt-20 border-t pt-8 text-center text-gray-600 text-sm">
           <p className="mb-2">
             “지금 쓰는 한 줄이, 당신의 미래를 만든다.”
@@ -107,7 +85,8 @@ export default function Home() {
 
           {/* 사업자 정보 (심사용) */}
           <div className="mt-6 text-xs text-gray-500 leading-5">
-            <p>서비스명: 닥터필리스 대입논술AI첨삭</p>
+            <p>닥터필리스 대입논술AI첨삭</p>
+            
             <p>사업자명: 주식회사 에어래빗 AIrabbit Inc.</p>
             <p>사업자등록번호: 536-86-03683</p>
             <p>대표자명: 주헌영</p>
