@@ -1,7 +1,7 @@
 // app/login/page.tsx
 "use client";
 
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -21,11 +21,29 @@ function LoginInner() {
   const search = useSearchParams();
   const redirect = (search?.get("redirect") ?? "/") as string;
 
+  // ✅ 필수 동의 체크박스 상태
+  const [agreed, setAgreed] = useState(false);
+
   useEffect(() => {
     if (status === "authenticated") {
       router.replace(redirect);
     }
   }, [status, redirect, router]);
+
+  // ✅ 동의 안 했으면 signIn 막기
+  const guardedSignIn = (provider: string, cbUrl: string) => {
+    if (!agreed) {
+      alert("이용약관 및 개인정보 처리방침에 동의해야 로그인할 수 있습니다.");
+      return;
+    }
+    void signIn(provider, { callbackUrl: cbUrl });
+  };
+
+  // 버튼 공통 클래스
+  const btn = (enabled: boolean) =>
+    `w-full h-11 rounded-lg border transition ${
+      enabled ? "bg-white hover:bg-gray-50 cursor-pointer" : "bg-gray-200 cursor-not-allowed"
+    }`;
 
   return (
     <main className="min-h-[calc(100vh-64px)] flex items-center justify-center p-6 bg-gradient-to-b from-blue-50 to-white">
@@ -35,20 +53,71 @@ function LoginInner() {
           <p className="mt-2 text-sm text-gray-600">로그인 후 첨삭/결제 기능을 이용할 수 있어요.</p>
         </div>
 
+        {/* 소셜/테스트 로그인 버튼들 */}
         <div className="space-y-3">
-          <button onClick={() => signIn("google", { callbackUrl: redirect })} className="w-full h-11 rounded-lg border hover:bg-gray-50 transition">
+          <button
+            type="button"
+            onClick={() => guardedSignIn("google", redirect)}
+            disabled={!agreed}
+            className={btn(agreed)}
+          >
             Google로 계속하기
           </button>
-          <button onClick={() => signIn("naver", { callbackUrl: redirect })} className="w-full h-11 rounded-lg border hover:bg-gray-50 transition">
+          <button
+            type="button"
+            onClick={() => guardedSignIn("naver", redirect)}
+            disabled={!agreed}
+            className={btn(agreed)}
+          >
             네이버로 계속하기
           </button>
-          <button onClick={() => signIn("kakao", { callbackUrl: redirect })} className="w-full h-11 rounded-lg border hover:bg-gray-50 transition">
+          <button
+            type="button"
+            onClick={() => guardedSignIn("kakao", redirect)}
+            disabled={!agreed}
+            className={btn(agreed)}
+          >
             카카오로 계속하기
           </button>
-          <button onClick={() => signIn("test-account", { callbackUrl: "/" })}>
-            테스트 계정으로 계속하기 ➡️아이디: 1004@happy.com , 비번: 1004happy
-          </button>
-        </div> 
+
+          {/* 테스트 계정 로그인 */}
+          <div className="text-sm text-gray-600 rounded-lg border p-3">
+            <p className="font-semibold mb-1">테스트 계정으로 계속하기</p>
+            <p>
+              아이디: <span className="font-mono">1004@happy.com</span>
+              {"  "}비번: <span className="font-mono">1004happy</span>
+            </p>
+            <button
+              type="button"
+              onClick={() => guardedSignIn("test-account", "/")}
+              disabled={!agreed}
+              className={`mt-3 ${btn(agreed)}`}
+            >
+              테스트 계정 로그인
+            </button>
+          </div>
+        </div>
+
+        {/* ✅ 필수 동의 체크박스 + 링크 */}
+        <div className="mt-6 flex items-start gap-2">
+          <input
+            id="agree"
+            type="checkbox"
+            checked={agreed}
+            onChange={(e) => setAgreed(e.target.checked)}
+            className="mt-1"
+          />
+          <label htmlFor="agree" className="text-sm text-gray-700">
+            <a href="/terms" target="_blank" className="text-blue-600 underline">
+              이용약관
+            </a>{" "}
+            및{" "}
+            <a href="/privacy" target="_blank" className="text-blue-600 underline">
+              개인정보 처리방침
+            </a>
+            에 동의합니다. (필수)
+          </label>
+        </div>
 
         <p className="mt-4 text-xs text-gray-500 text-center">
           로그인은 암호를 저장하지 않으며, 승인된 OAuth 제공자만 사용합니다.
