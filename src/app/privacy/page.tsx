@@ -25,7 +25,7 @@ export default function PrivacyPage() {
             <strong>필수</strong>:
             이름, 이메일(로그인/식별), 결제정보(거래 처리),{" "}
             <u>학생이 제출한 글/과제</u>
-            (AI 채점 및 <strong>전문가 첨삭·리포트 제공</strong> 목적)
+            (AI 채점 및 <strong>에어래빗에서 직접 첨삭·리포트 제공</strong> 목적)
           </li>
           <li>
             <strong>선택</strong>:
@@ -39,8 +39,8 @@ export default function PrivacyPage() {
           </li>
         </ul>
         <p className="mt-3">
-          수집된 정보는 전문가 첨삭(프리미엄/ VIP 포함)과 VIP
-          <strong> 종합 컨설팅(입시 전략 수립)</strong>의 품질 향상을 위한
+          수집된 정보는 에어래빗 첨삭(프리미엄/ VIP 포함)과 VIP
+          <strong> 종합 멘토링(입시 전략 수립)</strong>의 품질 향상을 위한
           참고 목적으로 이용됩니다.
         </p>
       </section>
@@ -49,7 +49,7 @@ export default function PrivacyPage() {
         <h2 className="font-semibold">3. 보유 및 이용기간</h2>
         <p>
           법령상 보존기간 또는 이용 목적 달성 시까지 보관하며, 목적 달성 후
-          지체 없이 파기합니다. 성적 <em>참고</em> 정보는 컨설팅 완료 후 즉시
+          지체 없이 파기합니다. 성적 <em>참고</em> 정보는 멘토링 완료 후 즉시
           삭제하거나 통계 분석 목적의 익명 처리만 수행합니다.
         </p>
       </section>

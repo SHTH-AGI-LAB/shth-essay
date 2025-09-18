@@ -20,8 +20,8 @@ export default function TermsPage() {
       <section className="mb-6">
         <h2 className="font-semibold">2. 서비스 정의</h2>
         <p>
-          회사는 AI 기반 대입논술 첨삭 및 총평 PDF 제공, 전문가 직접 첨삭 리포트,
-          학생 맞춤형 컨설팅을 포함한 디지털/무형 서비스를 제공합니다.
+          회사는 AI 기반 대입논술 첨삭 및 총평 PDF 제공, 에어래빗에서 직접 첨삭 리포트,
+          학생 맞춤형 멘토링을 포함한 디지털/무형 서비스를 제공합니다.
         </p>
         <ul className="list-disc pl-6 mt-2">
           <li>
@@ -29,12 +29,12 @@ export default function TermsPage() {
             채점 결과를 즉시 제공합니다.
           </li>
           <li>
-            <strong>프리미엄 상품:</strong> 결제 시 전문가 직접 첨삭 3회를 제공합니다.
+            <strong>프리미엄 상품:</strong> 결제 시 에어래빗에서 직접 전문 첨삭 3회를 제공합니다.
             첨삭 결과는 네이버 블로그 오픈채팅 또는 이메일을 통해 PDF로 전달됩니다.
           </li>
           <li>
-            <strong>VIP 상품:</strong> 전문가 직접 첨삭 5회(제공 방식 동일)와 종합
-            커리큘럼 및 입시 컨설팅 1회를 제공합니다. 컨설팅은 오픈채팅 또는 이메일
+            <strong>VIP 상품:</strong> 에어래빗에서 직접 전문 첨삭 5회(제공 방식 동일)와 종합
+            커리큘럼 및 입시 멘토링 1회를 제공합니다. 은 오픈채팅 또는 이메일
             PDF 파일로 제공되며, 필요 시 전화 상담이 가능합니다.
           </li>
         </ul>
@@ -55,7 +55,7 @@ export default function TermsPage() {
           &quot;환불정책&quot; 페이지 기준을 따릅니다.
         </p>
         <p className="mt-2">
-          단, 전문가 첨삭 및 컨설팅 서비스는 1회 이상 제공된 이후에는 환불이
+          단, 에어래빗 전문 첨삭 및 멘토링 서비스는 1회 이상 제공된 이후에는 환불이
           불가합니다.
         </p>
       </section>
