@@ -1,8 +1,7 @@
 // app/page.tsx
 import Link from "next/link";
 import Image from "next/image";
-import Testimonials from "@/components/Testimonials";
-import PayButton from "@/components/PayButton";
+import Testimonials from "@/components/Testimonials"; 
  
 const UNIVERSITIES = [
   { name: "가톨릭대", slug: "catholic" },
