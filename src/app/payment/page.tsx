@@ -100,7 +100,7 @@ const PLANS = [
           <ul className="text-sm text-gray-700 space-y-1">
             <li>Q. 환불은 가능한가요? → 네, 정책에 따라 단계별 환불이 가능합니다.</li>
             <li>Q. 과제 파일 형식은? → PDF, DOCX, HWP, 이미지(JPG/PNG) 지원.</li>
-            <li>Q. 회차 소진 기한은? → 결제일로부터 12개월.</li>
+            <li>Q. 회차 소진 기한은? → 결제일로부터 6개월.</li>
           </ul>
         </div>
       </section>

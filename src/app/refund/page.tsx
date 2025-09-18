@@ -34,7 +34,7 @@ export default function RefundPage() {
         <h2 className="text-lg font-semibold mb-2">3. 이용(제출) 기한</h2>
         <ul className="list-disc pl-6">
           <li>단건 첨삭권: 결제 후 <b>7일 이내</b> 초안 제출, 제출일로부터 <b>5일 이내</b> 결과 제공</li>
-          <li>패키지(다회권): 결제일로부터 <b>12개월 이내</b> 사용</li>
+          <li>패키지(다회권): 결제일로부터 <b>6개월 이내</b> 사용</li>
         </ul>
       </section>
 
