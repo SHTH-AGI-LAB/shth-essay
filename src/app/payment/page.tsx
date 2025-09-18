@@ -112,7 +112,7 @@ const PLANS = [
           <div className="flex gap-4">
             <a href="/terms" className="hover:text-gray-700">이용약관</a>
             <a href="/refund" className="hover:text-gray-700">환불/취소</a>
-            <a href="/privacy" className="hover:text-gray-700">개인정보처리방침</a>
+            <a href="/privacy" className="hover:text-gray-700">개인정보</a>
           </div>
           <div>
              ·사업자명/ 주식회사 에어래빗 Airabbit Inc. · 사업자등록번호/ 536-86-03683 ·대표: 주헌영 · 주소: 광주광역시 남구 행암도동길 43-11, 1층 · 이메일: dr_phyllis@naver.com · 대표번호/ 062-651-0922
