@@ -4,7 +4,12 @@
 import { useEffect, useRef } from "react";
 import { loadPaymentWidget, type PaymentWidgetInstance } from "@tosspayments/payment-widget-sdk";
 
-export default function PaymentWidgetClient() {
+type Props = {
+  amount: number;      // 상품 가격 (숫자)
+  orderName: string;   // 주문명 (상품 이름)
+};
+
+export default function PaymentWidgetClient({ amount, orderName }: Props) {
   const widgetRef = useRef<PaymentWidgetInstance | null>(null);
 
   useEffect(() => {
@@ -18,18 +23,19 @@ export default function PaymentWidgetClient() {
       const widget = await loadPaymentWidget(clientKey, "ANONYMOUS");
       widgetRef.current = widget;
 
-      // 결제수단/약관 UI 렌더 (id 셀렉터 사용)
-      await widget.renderPaymentMethods("#payment-widget", { value: 79000 });
+      // 결제수단/약관 UI 렌더링
+      await widget.renderPaymentMethods("#payment-widget", { value: amount });
       await widget.renderAgreement("#agreement");
     })();
-  }, []);
+  }, [amount]);
 
   const onPay = async () => {
     if (!widgetRef.current) return;
+
     await widgetRef.current.requestPayment({
       orderId: "order-" + Date.now(),
-      orderName: "프리미엄 30회",
-      successUrl: `${window.location.origin}/success`, // 경로 실제와 일치시킬 것
+      orderName,
+      successUrl: `${window.location.origin}/success`,
       failUrl: `${window.location.origin}/fail`,
     });
   };
@@ -38,8 +44,11 @@ export default function PaymentWidgetClient() {
     <div>
       <div id="payment-widget" className="mb-4" />
       <div id="agreement" className="mb-6" />
-      <button onClick={onPay} className="px-4 py-2 rounded bg-blue-600 text-white">
-        결제하기
+      <button
+        onClick={onPay}
+        className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition"
+      >
+        {orderName} 결제하기
       </button>
     </div>
   );
