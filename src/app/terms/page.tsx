@@ -93,7 +93,7 @@ export default function TermsPage() {
         </p>
       </section>
 
-      <p className="text-sm text-gray-600">시행일: 2025-09-01</p>
+      <p className="text-sm text-gray-600">시행일: 2025-09-11</p>
     </main>
   );
 }
