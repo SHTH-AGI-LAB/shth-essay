@@ -90,16 +90,17 @@ const PLANS = [
         <div>
           <h3 className="text-lg font-semibold mb-3">이용 안내</h3>
           <ol className="list-decimal list-inside text-sm text-gray-700 space-y-1">
-            <li>결제 후, 마이페이지에서 과제를 업로드합니다.</li>
-            <li>첨삭은 24~48시간 내에 반환됩니다(상품별 상이).</li>
-            <li>리포트는 월 1회 요약본으로 제공됩니다(프리미엄 이상).</li>
+            <li>결제 후, 첨삭받고 싶은 대학을 선택하고 글을 업로드합니다.</li>
+            <li>AI첨삭은 로딩 시간 약 2-3초 즉시 형성됩니다.</li>
+            <li>전문가 전체글 첨삭은 문서로 제공됩니다(프리미엄 이상).</li>
           </ol>
         </div>
         <div>
           <h3 className="text-lg font-semibold mb-3">FAQ</h3>
           <ul className="text-sm text-gray-700 space-y-1">
             <li>Q. 환불은 가능한가요? → 네, 정책에 따라 단계별 환불이 가능합니다.</li>
-            <li>Q. 전체글 첨삭은 어떻게 받나요? 닥터필리스 블로그 오픈채팅, 또는 e-메일 통해 지원합니다.</li>
+            <li>Q. 전체글 첨삭은 어떻게 받나요?
+                 → 닥터필리스 블로그 오픈채팅, 또는 e-메일 통해 지원합니다.</li>
             <li>Q. 회차 소진 기한은? → 결제일로부터 6개월.</li>
           </ul>
         </div>
