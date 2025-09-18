@@ -99,7 +99,7 @@ const PLANS = [
           <h3 className="text-lg font-semibold mb-3">FAQ</h3>
           <ul className="text-sm text-gray-700 space-y-1">
             <li>Q. 환불은 가능한가요? → 네, 정책에 따라 단계별 환불이 가능합니다.</li>
-            <li>Q. 과제 파일 형식은? → PDF, DOCX, HWP, 이미지(JPG/PNG) 지원.</li>
+            <li>Q. 전체글 첨삭은 어떻게 받나요? 네이버 닥터필리스 블로그 오픈채팅, 또는 e-메일 지원합니다.</li>
             <li>Q. 회차 소진 기한은? → 결제일로부터 6개월.</li>
           </ul>
         </div>
@@ -114,8 +114,7 @@ const PLANS = [
             <a href="/privacy" className="hover:text-gray-700">개인정보처리방침</a>
           </div>
           <div>
-            사업자명: 주식회사 에어래빗 Airabbit Inc. · 사업자등록번호: 536-86-03683 · 통신판매업 신고번호: 제2025-서울-0000호 ·
-            대표: 홍길동 · 주소: 광주광역시 남구 행암도동길 43-11, 1층 · 이메일: dr_phyllis@naver.com · 호스팅: Vercel Inc.
+             ·사업자명/ 주식회사 에어래빗 Airabbit Inc. · 사업자등록번호/ 536-86-03683 ·대표: 주헌영 · 주소: 광주광역시 남구 행암도동길 43-11, 1층 · 이메일: dr_phyllis@naver.com · 호스팅/ Vercel Inc.
           </div>
         </div>
       </section>
