@@ -21,8 +21,8 @@ const PLANS = [
     badge: "베스트셀러",
     bullets: [
       "첨삭 30회",
-      "전문가 전체글 첨삭 피드백 리포트 3회제공",
-      "전체글 첨삭은 2일 이내 응답",
+      "전체글 전문가 첨삭 피드백 리포트 3회",
+      "전문가 첨삭은 2일 이내 응답",
     ],
     highlight: true,
   },
@@ -33,8 +33,8 @@ const PLANS = [
     badge: "장기 학습",
     bullets: [
       "첨삭 100회",
-      "내신, 최저, 글쓰기 종합적인 커리큘럼 및 컨설팅",
-      "장기 성장 트래킹",
+      "논술전형 종합적인 커리큘럼 및 컨설팅",
+      "전체글 전문가 첨삭 피드백 리포트 5회",
     ],
   },
 ];
@@ -99,7 +99,7 @@ const PLANS = [
           <h3 className="text-lg font-semibold mb-3">FAQ</h3>
           <ul className="text-sm text-gray-700 space-y-1">
             <li>Q. 환불은 가능한가요? → 네, 정책에 따라 단계별 환불이 가능합니다.</li>
-            <li>Q. 전체글 첨삭은 어떻게 받나요? 네이버 닥터필리스 블로그 오픈채팅, 또는 e-메일 지원합니다.</li>
+            <li>Q. 전체글 첨삭은 어떻게 받나요? 닥터필리스 블로그 오픈채팅, 또는 e-메일 통해 지원합니다.</li>
             <li>Q. 회차 소진 기한은? → 결제일로부터 6개월.</li>
           </ul>
         </div>
@@ -110,11 +110,11 @@ const PLANS = [
         <div className="max-w-5xl mx-auto px-6 py-6 text-xs text-gray-500 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div className="flex gap-4">
             <a href="/terms" className="hover:text-gray-700">이용약관</a>
-            <a href="/refund" className="hover:text-gray-700">환불/취소 정책</a>
+            <a href="/refund" className="hover:text-gray-700">환불/취소</a>
             <a href="/privacy" className="hover:text-gray-700">개인정보처리방침</a>
           </div>
           <div>
-             ·사업자명/ 주식회사 에어래빗 Airabbit Inc. · 사업자등록번호/ 536-86-03683 ·대표: 주헌영 · 주소: 광주광역시 남구 행암도동길 43-11, 1층 · 이메일: dr_phyllis@naver.com · 호스팅/ Vercel Inc.
+             ·사업자명/ 주식회사 에어래빗 Airabbit Inc. · 사업자등록번호/ 536-86-03683 ·대표: 주헌영 · 주소: 광주광역시 남구 행암도동길 43-11, 1층 · 이메일: dr_phyllis@naver.com · 대표번호/ 062-651-0922
           </div>
         </div>
       </section>
