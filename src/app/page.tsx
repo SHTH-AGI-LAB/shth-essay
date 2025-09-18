@@ -87,10 +87,8 @@ export default function Home() {
           <div className="mt-6 text-xs text-gray-500 leading-5">
             <p>닥터필리스 대입논술AI첨삭</p>
             <p>사업자명/ 주식회사 에어래빗 AIrabbit Inc.</p>
-            <p>사업자등록번호/ 536-86-03683 대표자명/ 주헌영</p>
-            <p>사업장 주소/ 광주광역시 남구 행암도동길 43-11, 1층</p>
-            <p>대표번호: 062-651-0922</p>
-          </div>
+            <p>사업자등록번호/ 536-86-03683 대표자명/ 주헌영 사업장 주소/ 광주광역시 남구 행암도동길 43-11, 1층 대표번호/ 062-651-0922</p>
+           </div>
 
           <div className="mt-4 text-xs text-gray-400">
             © 2025 주식회사 에어래빗 AIrabbit Inc. All Rights Reserved.
