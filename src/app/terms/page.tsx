@@ -12,7 +12,7 @@ export default function TermsPage() {
       <section className="mb-6">
         <h2 className="font-semibold">1. 목적</h2>
         <p>
-          본 약관은 닥터필리스(이하 "회사")가 제공하는 서비스의 이용과 관련하여
+          본 약관은 닥터필리스(이하 &quot;회사&quot;)가 제공하는 서비스의 이용과 관련하여
           회사와 이용자의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.
         </p>
       </section>
@@ -43,7 +43,7 @@ export default function TermsPage() {
       <section className="mb-6">
         <h2 className="font-semibold">3. 계정 및 보안</h2>
         <p>
-          이용자는 계정 정보를 정확히 관리할 책임이 있으며, 타인의 권리 침해,
+          이용자는 계정 정보를 정확히 관리할 책임이 있으며, 타인의 권리 침해 또는
           불법적 사용이 확인되면 서비스가 제한될 수 있습니다.
         </p>
       </section>
@@ -52,7 +52,7 @@ export default function TermsPage() {
         <h2 className="font-semibold">4. 결제 및 환불</h2>
         <p>
           결제는 토스페이먼츠 등 PG사를 통해 안전하게 처리됩니다. 환불은
-          "환불정책" 페이지 기준을 따릅니다.
+          &quot;환불정책&quot; 페이지 기준을 따릅니다.
         </p>
         <p className="mt-2">
           단, 전문가 첨삭 및 컨설팅 서비스는 1회 이상 제공된 이후에는 환불이
@@ -93,7 +93,7 @@ export default function TermsPage() {
         </p>
       </section>
 
-      <p className="text-sm text-gray-600">시행일: 2025-09-11</p>
+      <p className="text-sm text-gray-600">시행일: 2025-09-01</p>
     </main>
   );
 }
