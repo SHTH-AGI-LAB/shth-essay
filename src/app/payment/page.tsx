@@ -46,7 +46,7 @@ const PLANS = [
       <section className="max-w-5xl mx-auto px-6 pt-16 pb-8 text-center">
         <h1 className="text-3xl md:text-4xl font-bold">결제 방식 안내</h1>
         <p className="mt-3 text-gray-600">
-          Airabbit Inc.는 AI 논술 첨삭 서비스를 제공합니다.
+          AIrabbit Inc.는 AI 논술 첨삭 서비스를 제공합니다.
           신용/체크카드 · 토스페이 · 네이버페이 · 카카오페이를 지원합니다.
         </p>
       </section>
@@ -115,7 +115,7 @@ const PLANS = [
             <a href="/privacy" className="hover:text-gray-700">개인정보</a>
           </div>
           <div>
-             닥터필리스 AI대입논술 첨삭  · 사업자/ 주식회사 에어래빗 Airabbit Inc. · 사업자등록번호/ 536-86-03683 · 대표/ 주헌영 · 주소/ 광주광역시 남구 행암도동길 43-11 1층 
+             닥터필리스 AI대입논술 첨삭  · 사업자/ 주식회사 에어래빗 AIrabbit Inc. · 사업자등록번호/ 536-86-03683 · 대표/ 주헌영 · 주소/ 광주광역시 남구 행암도동길 43-11 1층 
              · 이메일/ dr_phyllis@naver.com · 대표번호/ 062-651-0922
           </div>
         </div>

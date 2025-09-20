@@ -1,7 +1,7 @@
 // src/app/privacy/page.tsx
 export const metadata = {
   title: "개인정보 처리방침 | Dr-phyllis",
-  description: "닥터필리스(운영사: Airabbit Inc.) 개인정보 처리방침",
+  description: "닥터필리스(운영사: AIrabbit Inc.) 개인정보 처리방침",
 };
 
 export default function PrivacyPage() {
@@ -12,7 +12,7 @@ export default function PrivacyPage() {
       <section className="mb-6">
         <h2 className="font-semibold">1. 총칙</h2>
         <p>
-          본 서비스(브랜드: 닥터필리스, 운영사: <strong>Airabbit Inc.</strong>)는
+          본 서비스(브랜드: 닥터필리스, 운영사: <strong>AIrabbit Inc.</strong>)는
           「개인정보 보호법」 등 관련 법령을 준수하며, 서비스 제공에 필요한
           최소한의 개인정보만 수집·이용합니다.
         </p>
