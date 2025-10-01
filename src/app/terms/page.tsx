@@ -30,7 +30,7 @@ export default function TermsPage() {
           </li>
           <li>
             <strong>프리미엄 상품:</strong> 결제시 에어래빗에서 직접 전문 첨삭 3회를 제공합니다.
-            첨삭 결과는 네이버 블로그 오픈채팅 또는 이메일을 통해 PDF로 전달됩니다.
+            첨삭 결과는 네이버 블로그 오픈채팅 또는 이메일을 통해 PDF로 전달됩니다. 
           </li>
           <li>
             <strong>VIP 상품:</strong> 에어래빗에서 직접 전문 첨삭 5회(제공 방식 동일)와 종합
