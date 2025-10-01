@@ -79,23 +79,7 @@ function LoginInner() {
           >
             카카오로 계속하기
           </button>
-
-          {/* 테스트 계정 로그인 */}
-          <div className="text-sm text-gray-600 rounded-lg border p-3">
-            <p className="font-semibold mb-1">테스트 계정으로 계속하기</p>
-            <p>
-              아이디: <span className="font-mono">1004@happy.com</span>
-              {"  "}비번: <span className="font-mono">1004happy</span>
-            </p>
-            <button
-              type="button"
-              onClick={() => guardedSignIn("test-account", "/")}
-              disabled={!agreed}
-              className={`mt-3 ${btn(agreed)}`}
-            >
-              테스트 계정 로그인
-            </button>
-          </div>
+          
         </div>
 
         {/* ✅ 필수 동의 체크박스 + 링크 */}

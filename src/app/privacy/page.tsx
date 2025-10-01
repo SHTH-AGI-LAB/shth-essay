@@ -23,7 +23,7 @@ export default function PrivacyPage() {
         <ul className="list-disc pl-6 space-y-1">
           <li>
             <strong>필수</strong>:
-            이름, 이메일(로그인/식별), 결제정보(거래 처리),{" "}
+            이름, 이메일(로그인/식별), 주소(이벤트/증정), 결제정보(거래 처리),{" "}
             <u>학생이 제출한 글/과제</u>
             (AI 채점 및 <strong>에어래빗에서 직접 첨삭·리포트 제공</strong> 목적)
           </li>
@@ -39,7 +39,7 @@ export default function PrivacyPage() {
           </li>
         </ul>
         <p className="mt-3">
-          수집된 정보는 에어래빗 첨삭(프리미엄/ VIP 포함)과 VIP
+          수집된 정보는 이벤트 증정 및 에어래빗 첨삭(프리미엄/ VIP 포함)과 VIP
           <strong> 종합 멘토링(입시 전략 수립)</strong>의 품질 향상을 위한
           참고 목적으로 이용됩니다.
         </p>
@@ -85,7 +85,7 @@ export default function PrivacyPage() {
       <section className="mb-6">
         <h2 className="font-semibold">7. 문의처</h2>
         <ul className="list-disc pl-6">
-          <li>이메일: dr-phyllis@naver.com</li>
+          <li>이메일: contact@ai-rabbit.com</li>
           <li>대표번호: 062-651-0922</li>
         </ul>
       </section>

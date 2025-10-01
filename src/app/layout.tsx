@@ -1,10 +1,11 @@
-// app/layout.tsx
+// src/app/layout.tsx
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import AuthProvider from "@/components/AuthProvider";
 import Header from "@/components/Header";
 import InAppBrowserNotice from "@/components/InAppBrowserNotice";
+import PromoPopup from "@/components/PromoPopup"; // ✅ [추가] 팝업 컴포넌트 불러오기
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,6 +25,7 @@ export default function RootLayout({
         <AuthProvider>
           <Header />
           <InAppBrowserNotice />
+          <PromoPopup /> {/* ✅ [추가] 헤더 아래에 팝업 삽입 */}
           {children}
         </AuthProvider>
       </body>

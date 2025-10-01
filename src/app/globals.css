@@ -1,8 +1,14 @@
 @import "tailwindcss";
 
+/* ========= Theme ========= */
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* modal에서 쓰는 공통 색상 */
+  --fg: var(--foreground);
+  --line: #e5e7eb;
+  --muted: #6b7280;
 }
 
 @theme inline {
@@ -16,6 +22,9 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+
+    --line: #2a2a2a;
+    --muted: #9ca3af;
   }
 }
 
@@ -24,3 +33,110 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ========= Promo Modal ========= */
+/* 백드롭 (컴포넌트: modal_backdrop) */
+.modal_backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .6);
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+}
+
+/* 박스 (컴포넌트: modal / modal_box) */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 1001;
+}
+.modal_box {
+  width: min(92vw, 880px);
+  background: var(--background);
+  color: var(--fg);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .25);
+  position: relative;
+  text-align: center; /* 기본 가운데 정렬 */
+}
+
+/* 닫기 버튼 (컴포넌트: modal_close) */
+.modal_close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: 0;
+  color: var(--fg);
+  font-size: 20px;
+  cursor: pointer;
+  opacity: .8;
+}
+.modal_close:hover { opacity: 1; }
+
+/* 이미지 (컴포넌트: modal_image) */
+.modal_image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.modal_image img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+/* 텍스트 (컴포넌트: modal_title / modal_text / modal_bullets) */
+.modal_title {
+  margin: 6px 0 8px;
+  font-size: clamp(22px, 2.6vw, 28px);
+  font-weight: 800;
+  line-height: 1.25;
+}
+.modal_text {
+  font-size: clamp(14px, 1.6vw, 16px);
+  line-height: 1.7;
+  margin: 4px 0 10px;
+  color: var(--muted);
+}
+.modal_bullets {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0 14px;
+  color: var(--muted);
+  font-size: clamp(12px, 1.4vw, 14px);
+}
+.modal_bullets li { margin: 6px 0; }
+
+/* 액션 (컴포넌트: modal_actions) */
+.modal_actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* 버튼 기본값 (사이트 전체에서 공용으로 써도 OK) */
+.btn {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: #111827;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn:hover { background: #fafafa; }
+.btn-primary {
+  border: 0;
+  background: #111827;
+  color: #fff;
+}
+.btn-primary:hover { opacity: .9; }
+
+/* (옵션) 추가 유틸: 더 강한 가운데 정렬이 필요할 때 */
+.modal_centered { text-align: center; } 
