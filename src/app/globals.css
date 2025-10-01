@@ -84,3 +84,9 @@ body {
 .btn:hover{ background:#242424; }
 .btn-primary{ border-color:#2e5cff; background:#2e5cff; color:#fff; }
 .btn-primary:hover{ filter:brightness(1.1); }
+.modal_legal {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+}
