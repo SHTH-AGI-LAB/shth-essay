@@ -35,12 +35,13 @@ body {
 }
 
 /* === Promo Modal (match classNames in PromoPopup.tsx) === */
+/* backdrop는 아래, 카드가 위 */
 .modal_backdrop{
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.45);   /* 흐릿함 완화 */
-  backdrop-filter: blur(4px);    /* 너무 세지 않게 */
-  z-index: 999;                  /* 배경은 999 */
+  background: rgba(0,0,0,.45);
+  backdrop-filter: blur(4px);
+  z-index: 999;            /* ▼ 아래 */
 }
 
 .modal{
@@ -48,10 +49,12 @@ body {
   inset: 0;
   display: grid;
   place-items: center;
-  z-index: 1000;                 /* 상자는 1000 */
+  z-index: 1000;           /* 컨테이너 */
 }
 
 .modal_box{
+  position: relative;
+  z-index: 1002;           /* ▲ 카드가 가장 위 */
   width: min(92vw, 720px);
   background: #111;
   color: #fff;
@@ -59,8 +62,7 @@ body {
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0,0,0,.5);
   padding: 18px;
-  position: relative; 
-}
+} 
 
 .modal_close{
   position: absolute;
@@ -73,23 +75,12 @@ body {
 .modal_close:hover{ color:#fff; }
 
 .modal_image{ width:100%; height:auto; border-radius:10px; margin-bottom:12px; }
-.modal_title{ margin: 6px 0 4px; font-size: clamp(18px, 2.4vw, 24px); font-weight: 800; }
-.modal_text{ color:#cfcfcf; margin: 6px 0 10px; line-height: 1.6; }
-
+.modal_title{ margin:6px 0 4px; font-size:clamp(18px,2.4vw,24px); font-weight:800; }
+.modal_text{ color:#cfcfcf; margin:6px 0 10px; line-height:1.6; }
 .modal_bullets{ margin:8px 0 0; padding-left:18px; color:#e6e6e6; }
 .modal_bullets li{ margin:6px 0; opacity:.9; }
-
-.modal_actions{
-  margin-top: 12px;
-  display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap;
-}
-
-.btn{
-  padding:10px 14px; border-radius:10px;
-  border:1px solid #444; color:#eee; background:#1a1a1a; text-decoration:none;
-}
+.modal_actions{ margin-top:12px; display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; }
+.btn{ padding:10px 14px; border-radius:10px; border:1px solid #444; color:#eee; background:#1a1a1a; text-decoration:none; }
 .btn:hover{ background:#242424; }
-.btn-primary{
-  border-color:#2e5cff; background:#2e5cff; color:#fff;
-}
+.btn-primary{ border-color:#2e5cff; background:#2e5cff; color:#fff; }
 .btn-primary:hover{ filter:brightness(1.1); }

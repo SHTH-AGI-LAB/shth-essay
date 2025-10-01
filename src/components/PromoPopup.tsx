@@ -33,33 +33,30 @@ export default function PromoPopup() {
 
   if (shouldHide || !open) return null;
 
-  return (
+  // PromoPopup.tsx의 return 부분만 교체
+return (
+  <>
+    <div className="modal_backdrop" onClick={onClose} />
     <div className="modal" role="dialog" aria-modal="true" aria-label="이벤트 안내">
       <div className="modal_box">
-        <button className="modal_close" aria-label="팝업 닫기" onClick={onClose}>
-          ✕
-        </button>
-
+        <button className="modal_close" aria-label="팝업 닫기" onClick={onClose}>✕</button>
         <div className="modal_image">
-          <Image src="/images/promo.jpg" alt="AIRABBIT 머그컵 프로모션" width={960} height={480} />
+          <Image src="/images/promo.jpg" alt="AIRABBIT 머그컵 프로모션" width={960} height={480}/>
         </div>
-
         <div className="modal_title">2026 대입논술 이벤트</div>
         <div className="modal_text">
           프리미엄 이상 가입 시 논술노트 & 머그컵 증정(선착순).<br />
-          AI첨삭 이용 합격 인증 시 도서문화상품권 5만원 지급 (무료도 👌)
+          AI첨삭 이용 합격 인증 시 도서문화상품권 5만원 지급(무료도👌)
         </div>
-
         <ul className="modal_bullets">
           <li>이벤트 참여 시 개인정보 수집·이용에 동의한 것으로 간주됩니다.</li>
         </ul>
-
         <div className="modal_actions">
           <a className="btn btn-primary" href="/terms" onClick={onClose}>이용안내 보기</a>
           <a className="btn" href="mailto:contact@ai-rabbit.com" onClick={onClose}>이벤트 문의</a>
         </div>
       </div>
-      <div className="modal_backdrop" onClick={onClose} />
     </div>
-  );
+  </>
+);
 }
