@@ -1,9 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-export default function SuccessPage() {
+// ✅ 이 페이지는 빌드 타임 프리렌더 금지 (동적)
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+function SuccessContent() {
   const sp = useSearchParams();
 
   const paymentType = sp.get("paymentType") ?? undefined;
@@ -20,7 +24,6 @@ export default function SuccessPage() {
     const amountNum = Number(amountStr);
     if (!Number.isFinite(amountNum)) return;
 
-    // 중복 승인 방지
     const dedupKey = `confirmed:${orderId}`;
     if (sessionStorage.getItem(dedupKey)) return;
 
@@ -69,5 +72,14 @@ export default function SuccessPage() {
 
       <p className="mt-4 text-gray-500">※ 이 화면을 캡처해서 PPT에 넣어주세요.</p>
     </main>
+  );
+}
+
+export default function SuccessPage() {
+  // ✅ useSearchParams 사용 컴포넌트를 Suspense로 감싼다
+  return (
+    <Suspense fallback={<main className="max-w-xl mx-auto p-6">로딩 중…</main>}>
+      <SuccessContent />
+    </Suspense>
   );
 }
