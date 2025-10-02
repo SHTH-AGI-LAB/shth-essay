@@ -3,10 +3,6 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-// ✅ 이 페이지는 빌드 타임 프리렌더 금지 (동적)
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
 function SuccessContent() {
   const sp = useSearchParams();
 
@@ -35,7 +31,7 @@ function SuccessContent() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ paymentKey, orderId, amount: amountNum }),
         });
-        const data = (await res.json()) as { ok?: boolean; error?: { message?: string } };
+        const data = await res.json();
 
         if (!res.ok || data.ok === false) {
           setStatus("error");
@@ -66,7 +62,7 @@ function SuccessContent() {
 
       <div className="mt-4 text-sm">
         {status === "confirming" && <p>결제 승인 중입니다…</p>}
-        {status === "ok" && <p className="text-green-600">승인이 완료되었습니다. 이제 첨삭을 이용할 수 있어요!</p>}
+        {status === "ok" && <p className="text-green-600">승인 완료! 이제 첨삭을 이용할 수 있어요 ✨</p>}
         {status === "error" && <p className="text-red-600">승인 실패: {message}</p>}
       </div>
 
@@ -76,7 +72,6 @@ function SuccessContent() {
 }
 
 export default function SuccessPage() {
-  // ✅ useSearchParams 사용 컴포넌트를 Suspense로 감싼다
   return (
     <Suspense fallback={<main className="max-w-xl mx-auto p-6">로딩 중…</main>}>
       <SuccessContent />
