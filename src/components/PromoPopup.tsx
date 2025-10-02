@@ -53,53 +53,58 @@ export default function PromoPopup() {
   if (shouldHide || !open) return null;
 
   return (
-    <div className="modal-backdrop">
-      <div className="modal">
-        <button className="modal__close" onClick={onClose} aria-label="닫기">
-          ✕
-        </button>
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+  <div className="relative w-[90%] max-w-lg rounded-lg bg-white text-black shadow-xl p-6">
+    {/* 닫기 버튼 */}
+    <button
+      onClick={onClose}
+      className="absolute top-3 right-3 text-xl font-bold text-gray-500 hover:text-gray-800"
+      aria-label="닫기"
+    >
+      ✕
+    </button>
 
-        <div className="modal__image">
-          <Image
-            src="/images/promo.jpg"
-            alt="AIRABBIT 머그컵 프로모션"
-            width={960}
-            height={480}
-          />
-        </div>
+    {/* 이미지 */}
+    <div className="mb-4">
+      <Image
+        src="/images/promo.jpg"
+        alt="AIRABBIT 머그컵 프로모션"
+        width={600}
+        height={300}
+        className="rounded"
+      />
+    </div>
 
-        <div className="modal__title">2026 대입논술 이벤트</div>
-        <div className="modal__text">
-          프리미엄 이상 가입 시 논술노트 & 머그컵 증정(선착순).<br />
-          AI첨삭 이용 합격 인증 시 도서문화상품권 5만원 지급(무료도👌)
-        </div>
+    {/* 타이틀 */}
+    <h2 className="text-xl font-bold mb-2 text-center">2026 대입논술 이벤트</h2>
 
-        <ul className="modal__bullets">
-          <li>이벤트 참여 시 개인정보 수집·이용에 동의한 것으로 간주됩니다.</li>
-        </ul>
+    {/* 본문 */}
+    <p className="text-sm mb-3 text-center">
+      프리미엄 이상 가입 시 논술노트 & 머그컵 증정 (선착순)<br />
+      AI 첨삭 이용 합격 인증 시 도서문화상품권 5만원 지급 (무료도 포함)
+    </p>
 
-        {/* ✅ 체크박스 영역 */}
-        <div className="flex items-center gap-2 mt-3">
-          <input
-            type="checkbox"
-            id="dontShowToday"
-            checked={dontShowToday}
-            onChange={(e) => setDontShowToday(e.target.checked)}
-          />
-          <label htmlFor="dontShowToday" className="text-sm text-gray-300">
-            체크 후 닫기를 누르면 하루 동안 보이지 않습니다.
-          </label>
-        </div>
+    {/* 안내 문구 */}
+    <p className="text-xs text-gray-500 mb-2 text-center">
+      이벤트 참여 시 개인정보 수집·이용에 동의한 것으로 간주됩니다.
+    </p>
 
-        <div className="modal__actions">
-          <a className="btn btn-primary" href="/terms" onClick={onClose}>
-            이용안내 보기
-          </a>
-          <a className="btn" href="mailto:contact@ai-rabbit.com" onClick={onClose}>
-            이벤트 문의
-          </a>
-        </div>
+    {/* 체크박스 + 버튼 */}
+    <div className="flex items-center justify-between mt-4">
+      <label className="flex items-center gap-2 text-xs">
+        <input
+          type="checkbox"
+          checked={dontShowToday}
+          onChange={(e) => setDontShowToday(e.target.checked)}
+        />
+        오늘 하루 보지 않기
+      </label>
+      <div className="flex gap-2">
+        <a className="px-3 py-1 bg-black text-white rounded text-xs" href="/terms" onClick={onClose}>이용안내 보기</a>
+        <a className="px-3 py-1 border border-gray-400 rounded text-xs" href="mailto:contact@ai-rabbit.com" onClick={onClose}>이벤트 문의</a>
       </div>
     </div>
+  </div>
+</div>
   );
 }
