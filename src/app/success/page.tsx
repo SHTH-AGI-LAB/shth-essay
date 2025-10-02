@@ -66,7 +66,7 @@ function SuccessContent() {
         {status === "error" && <p className="text-red-600">승인 실패: {message}</p>}
       </div>
 
-      <p className="mt-4 text-gray-500">※ 이 화면을 캡처해서 PPT에 넣어주세요.</p>
+      <p className="mt-4 text-gray-500">※행운은 노력으로 결정되는 것. 많이 써볼수록 행운도 더 커지길</p>
     </main>
   );
 }
