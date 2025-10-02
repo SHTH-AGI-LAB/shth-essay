@@ -1,62 +1,54 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-type ConfirmBody = {
-  paymentKey: string;
-  orderId: string;
-  amount: number;
-};
-
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json()) as Partial<ConfirmBody>;
+    const { paymentKey, orderId, amount } = await req.json();
 
-    const paymentKey = typeof body.paymentKey === "string" ? body.paymentKey : "";
-    const orderId = typeof body.orderId === "string" ? body.orderId : "";
-    const amount = typeof body.amount === "number" ? body.amount : NaN;
-
-    if (!paymentKey || !orderId || !Number.isFinite(amount)) {
-      return NextResponse.json({ message: "잘못된 요청입니다." }, { status: 400 });
+    if (!paymentKey || !orderId || !amount) {
+      return NextResponse.json({ ok: false, error: { message: "필수 파라미터 누락" } }, { status: 400 });
     }
 
-    // 서버에서 금액 검증 (데모: 고정가)
-    const serverAmount = 1000;
-    if (amount !== serverAmount) {
-      return NextResponse.json({ message: "금액 불일치" }, { status: 400 });
+    const secret = process.env.TOSS_SECRET_KEY;
+    if (!secret) {
+      return NextResponse.json({ ok: false, error: { message: "서버 환경변수(TOSS_SECRET_KEY) 없음" } }, { status: 500 });
     }
 
-    const secretKey = process.env.TOSS_SECRET_KEY;
-    if (!secretKey) {
-      return NextResponse.json({ message: "서버 설정 오류(TOSS_SECRET_KEY 없음)" }, { status: 500 });
-    }
-
-    const basicToken = Buffer.from(`${secretKey}:`, "utf-8").toString("base64");
+    const auth = Buffer.from(`${secret}:`).toString("base64");
 
     const res = await fetch("https://api.tosspayments.com/v1/payments/confirm", {
       method: "POST",
       headers: {
-        Authorization: `Basic ${basicToken}`,
+        Authorization: `Basic ${auth}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ paymentKey, orderId, amount: serverAmount }),
+      body: JSON.stringify({
+        paymentKey,
+        orderId,
+        amount: Number(amount),
+      }),
+      // @ts-ignore – Next.js edge 환경에서도 node TLS 허용
     });
 
-    const data = (await res.json()) as unknown;
+    const data = await res.json();
 
     if (!res.ok) {
-      const message =
-        typeof data === "object" &&
-        data !== null &&
-        "message" in data &&
-        typeof (data as { message?: unknown }).message === "string"
-          ? (data as { message: string }).message
-          : "승인 실패";
-      return NextResponse.json({ message }, { status: 400 });
+      return NextResponse.json({ ok: false, error: data }, { status: res.status });
     }
 
-    // TODO: 성공 처리 (DB 저장/영수증 발송 등)
-    return NextResponse.json({ ok: true, data });
-  } catch (e: unknown) {
-    const message = e instanceof Error ? e.message : "서버 오류";
-    return NextResponse.json({ message }, { status: 500 });
+    // ✅ 결제 승인 성공 → 유저 이용권 쿠키 발급(1년)
+    const response = NextResponse.json({ ok: true, data }, { status: 200 });
+    response.cookies.set("paid", "true", {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365,
+    });
+
+    // (선택) 여기서 Supabase 등에 카운터/영수증 저장도 가능
+    // await savePaymentToDB(userId, data);
+
+    return response;
+  } catch (e: any) {
+    return NextResponse.json({ ok: false, error: { message: e?.message ?? "서버 오류" } }, { status: 500 });
   }
 }
