@@ -110,9 +110,9 @@ const PLANS = [
       <section className="border-t">
         <div className="max-w-5xl mx-auto px-6 py-6 text-xs text-gray-500 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div className="flex gap-4">
-            <a href="/terms" className="hover:text-gray-700">이용약관</a>
-            <a href="/refund" className="hover:text-gray-700">환불/취소</a>
-            <a href="/privacy" className="hover:text-gray-700">개인정보</a>
+            <Link href="/terms" className="hover:text-gray-700">이용약관</Link>
+            <Link href="/refund" className="hover:text-gray-700">환불/취소</Link>
+            <Link href="/privacy" className="hover:text-gray-700">개인정보</Link>
           </div>
           <div>
              닥터필리스 AI대입논술 첨삭  · 사업자/ 주식회사 에어래빗 AIrabbit Inc. · 사업자등록번호/ 536-86-03683 · 대표/ 주헌영 · 주소/ 광주광역시 남구 행암도동길 43-11 1층 

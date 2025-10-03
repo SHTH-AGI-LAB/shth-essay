@@ -60,7 +60,7 @@ export default function Header() {
         if (!res.ok) return; // 실패 시 조용히 무시 (헤더만)
         const data = (await res.json()) as Usage;
         if (alive) setUsage(data);
-      } catch (_) {
+      } catch {
         /* noop */
       }
     })();

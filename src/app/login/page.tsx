@@ -4,6 +4,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic"; // ✅ 미리 렌더하지 말고 동적 처리
 
@@ -92,13 +93,13 @@ function LoginInner() {
             className="mt-1"
           />
           <label htmlFor="agree" className="text-sm text-gray-700">
-            <a href="/terms" target="_blank" className="text-blue-600 underline">
+            <Link href="/terms" target="_blank" className="text-blue-600 underline">
               이용약관
-            </a>{" "}
+            </Link>{" "}
             및{" "}
-            <a href="/privacy" target="_blank" className="text-blue-600 underline">
+            <Link href="/privacy" target="_blank" className="text-blue-600 underline">
               개인정보 처리방침
-            </a>
+            </Link>
             에 동의합니다. (필수)
           </label>
         </div>

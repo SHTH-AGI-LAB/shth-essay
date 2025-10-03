@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     }
 
     // 4) 플랜별 카운터 업데이트
-    let updates: Record<string, number> = {};
+    const updates: Record<string, number> = {};
     if (orderName.includes("스탠다드")) {
       updates.standard_count = (current.standard_count ?? 0) + 10;
     } else if (orderName.includes("프리미어")) {
@@ -51,7 +51,19 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ success: true, updates });
-  } catch (err: any) {
-    return NextResponse.json({ error: "SERVER_ERROR", detail: err.message }, { status: 500 });
+  } catch (err: unknown) {
+  console.error("Confirm API error:", err);
+
+  if (err instanceof Error) {
+    return NextResponse.json(
+      { error: "SERVER_ERROR", detail: err.message },
+      { status: 500 }
+    );
   }
+
+  return NextResponse.json(
+    { error: "SERVER_ERROR", detail: String(err) },
+    { status: 500 }
+  );
+}
 }
