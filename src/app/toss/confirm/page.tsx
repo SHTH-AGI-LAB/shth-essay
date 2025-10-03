@@ -1,8 +1,16 @@
 // src/app/toss/confirm/page.tsx
 "use client";
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+
+type ConfirmResponse = {
+  ok: boolean;
+  plan?: "standard" | "premium" | "vip";
+  qty?: number;
+  error?: string;
+};
 
 export default function TossConfirmPage() {
   const params = useSearchParams();
@@ -14,6 +22,7 @@ export default function TossConfirmPage() {
   const [msg, setMsg] = useState<string>("결제 확인 중…");
 
   useEffect(() => {
+    // 필수 파라미터 체크
     if (!paymentKey || !orderId || !amount) {
       setStatus("fail");
       setMsg("필수 파라미터가 누락되었어요.");
@@ -22,28 +31,33 @@ export default function TossConfirmPage() {
 
     const run = async () => {
       try {
+        const amountNum = Number(amount);
+        if (Number.isNaN(amountNum)) {
+          setStatus("fail");
+          setMsg("결제 금액이 올바르지 않아요.");
+          return;
+        }
+
         const res = await fetch("/api/toss/confirm", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            paymentKey,
-            orderId,
-            amount: Number(amount),
-          }),
+          body: JSON.stringify({ paymentKey, orderId, amount: amountNum }),
         });
 
-        const json = await res.json();
+        const json = (await res.json()) as ConfirmResponse;
 
-        if (res.ok && json?.success) {
+        if (res.ok && json?.ok === true) {
           setStatus("ok");
           setMsg("결제가 완료되었어요. 이용권이 충전되었습니다.");
         } else {
           setStatus("fail");
           setMsg(json?.error ?? "결제 확인 중 오류가 발생했어요.");
         }
-      } catch (e: any) {
+      } catch (e: unknown) {
+        const message =
+          e instanceof Error ? e.message : typeof e === "string" ? e : "네트워크 오류가 발생했어요.";
         setStatus("fail");
-        setMsg(e?.message ?? "네트워크 오류가 발생했어요.");
+        setMsg(message);
       }
     };
 
@@ -51,12 +65,10 @@ export default function TossConfirmPage() {
   }, [paymentKey, orderId, amount]);
 
   return (
-    <main className="max-w-xl mx-auto p-6">
-      <h1 className="text-xl font-bold mb-4">결제 확인</h1>
+    <main className="mx-auto max-w-xl p-6">
+      <h1 className="mb-4 text-xl font-bold">결제 확인</h1>
 
-      {status === "pending" && (
-        <p className="text-gray-600">{msg}</p>
-      )}
+      {status === "pending" && <p className="text-gray-600">{msg}</p>}
 
       {status === "ok" && (
         <div className="rounded border border-green-200 bg-green-50 p-4">
