@@ -1,7 +1,7 @@
 // src/app/api/score/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { UNIVERSITIES as UNIVERSITIES_RAW } from "../../../data/universities";
-import { supabaseAdmin } from "../../../lib/db";
+import { supabaseAdmin } from "../../../lib/supabaseServer";
 
 /** ===== 설정 ===== */
 const API_VERSION = "score-api v4-db";
