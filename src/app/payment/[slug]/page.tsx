@@ -2,7 +2,7 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import PaymentWidgetClient from "../PaymentWidgetClient";
+import PaymentWidgetClient from "@/components/PaymentWidgetClient";
 
 const PLANS = {
   standard: { amount: 29000, orderName: "스탠다드 10회" },
