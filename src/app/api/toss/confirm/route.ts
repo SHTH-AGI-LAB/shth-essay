@@ -4,6 +4,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getSupabaseAdmin } from "@/lib/supabaseServer";
 
+const supabaseAdmin = getSupabaseAdmin();
+
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 

@@ -2,8 +2,8 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { supabaseAdmin } from "@/lib/supabaseServer";
-
+import { getSupabaseAdmin } from "@/lib/supabaseServer";
+const supabaseAdmin = getSupabaseAdmin();
 const FREE_TRIAL_LIMIT = Number(process.env.FREE_TRIAL_LIMIT ?? 3);
 
 export async function POST() {

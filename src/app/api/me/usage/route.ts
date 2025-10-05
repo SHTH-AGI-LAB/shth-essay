@@ -2,7 +2,8 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { supabaseAdmin } from "@/lib/supabaseServer";
+import { getSupabaseAdmin } from "@/lib/supabaseServer";
+const supabaseAdmin = getSupabaseAdmin();
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
