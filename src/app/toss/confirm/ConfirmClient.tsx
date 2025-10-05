@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 type ConfirmResponse = {
@@ -18,51 +18,69 @@ type ConfirmResponse = {
 
 export default function ConfirmClient() {
   const params = useSearchParams();
-  const paymentKey = params.get("paymentKey");
-  const orderId = params.get("orderId");
-  const amount = params.get("amount");
+
+  // ✅ 같은 키가 여러 번 올 때(중복 쿼리) 마지막 값을 선택
+  const pickLast = (key: string): string | null => {
+    const all = params.getAll(key);
+    if (all.length === 0) return null;
+    const v = all[all.length - 1];
+    return v?.trim() ? v : null;
+  };
+
+  const paymentKey = pickLast("paymentKey");
+  const orderId = pickLast("orderId");
+  const amountStr = pickLast("amount");
 
   const [status, setStatus] = useState<"pending" | "ok" | "fail">("pending");
   const [msg, setMsg] = useState<string>("결제 확인 중…");
 
+  // amount 파싱(정수)
+  const amountNum = useMemo(() => {
+    if (!amountStr) return NaN;
+    const n = Number(amountStr);
+    return Number.isFinite(n) ? n : NaN;
+  }, [amountStr]);
+
   useEffect(() => {
-    if (!paymentKey || !orderId || !amount) {
+    // 파라미터 사전 검증
+    if (!paymentKey || !orderId || !amountStr) {
       setStatus("fail");
       setMsg("필수 파라미터가 누락되었어요.");
+      return;
+    }
+    if (Number.isNaN(amountNum)) {
+      setStatus("fail");
+      setMsg("결제 금액이 올바르지 않아요.");
       return;
     }
 
     const run = async () => {
       try {
-        const amountNum = Number(amount);
-        if (Number.isNaN(amountNum)) {
-          setStatus("fail");
-          setMsg("결제 금액이 올바르지 않아요.");
-          return;
-        }
-
         const res = await fetch("/api/toss/confirm", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ paymentKey, orderId, amount: amountNum }),
+          body: JSON.stringify({
+            paymentKey,
+            orderId,
+            amount: amountNum,
+          }),
         });
 
         const json = (await res.json()) as ConfirmResponse;
 
-        if (res.ok && (json as ConfirmResponse)?.ok) {
-  setStatus("ok");
-  setMsg("결제가 완료되었어요. 이용권이 충전되었습니다.");
-} else {
-  const j = json as ConfirmResponse;
-  const lines = [
-    j.error ?? "결제 확인 중 오류가 발생했어요.",
-    j.tossCode ? `code: ${j.tossCode}` : "",
-    j.tossMessage ? `message: ${j.tossMessage}` : "",
-    typeof j.status === "number" ? `status: ${j.status}` : "",
-  ].filter(Boolean);
-  setStatus("fail");
-  setMsg(lines.join("\n"));
-}
+        if (res.ok && json?.ok) {
+          setStatus("ok");
+          setMsg("결제가 완료되었어요. 이용권이 충전되었습니다.");
+        } else {
+          const lines = [
+            json?.error ?? "결제 확인 중 오류가 발생했어요.",
+            json?.tossCode ? `code: ${json.tossCode}` : "",
+            json?.tossMessage ? `message: ${json.tossMessage}` : "",
+            typeof json?.status === "number" ? `status: ${json.status}` : "",
+          ].filter(Boolean);
+          setStatus("fail");
+          setMsg(lines.join("\n"));
+        }
       } catch (e: unknown) {
         const message =
           e instanceof Error
@@ -76,7 +94,7 @@ export default function ConfirmClient() {
     };
 
     run();
-  }, [paymentKey, orderId, amount]);
+  }, [paymentKey, orderId, amountNum, amountStr]);
 
   return (
     <main className="mx-auto max-w-xl p-6">
@@ -86,7 +104,7 @@ export default function ConfirmClient() {
 
       {status === "ok" && (
         <div className="rounded border border-green-200 bg-green-50 p-4">
-          <p className="font-medium text-green-700">{msg}</p>
+          <p className="font-medium text-green-700 whitespace-pre-line">{msg}</p>
           <Link href="/" className="mt-4 inline-block text-blue-600 underline">
             홈으로 가기
           </Link>
@@ -95,7 +113,7 @@ export default function ConfirmClient() {
 
       {status === "fail" && (
         <div className="rounded border border-red-200 bg-red-50 p-4">
-          <p className="font-medium text-red-700">{msg}</p>
+          <p className="font-medium text-red-700 whitespace-pre-line">{msg}</p>
           <Link href="/payment" className="mt-4 inline-block text-blue-600 underline">
             결제 다시 시도하기
           </Link>

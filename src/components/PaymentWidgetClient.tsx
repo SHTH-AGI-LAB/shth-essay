@@ -8,23 +8,15 @@ import {
 } from "@tosspayments/payment-widget-sdk";
 
 type Props = {
-  amount: number; // 29000 | 79000 | 199000
-  orderName: string; // "스탠다드 10회" | "프리미어 30회" | "VIP 100회"
+  amount: number;      // 29000 | 79000 | 199000
+  orderName: string;   // "스탠다드 10회" | "프리미어 30회" | "VIP 100회"
 };
 
-function toPlanCode(
-  orderName: string,
-  amount: number
-): "std" | "pre" | "vip" {
+function toPlanCode(orderName: string, amount: number): "std" | "pre" | "vip" {
   const name = orderName.toLowerCase();
 
   if (name.includes("스탠다드") || name.includes("standard")) return "std";
-  if (
-    name.includes("프리미어") ||
-    name.includes("프리미엄") ||
-    name.includes("premium")
-  )
-    return "pre";
+  if (name.includes("프리미어") || name.includes("프리미엄") || name.includes("premium")) return "pre";
   if (name.includes("vip")) return "vip";
 
   // 보조 판정(가격기반)
@@ -48,9 +40,7 @@ export default function PaymentWidgetClient({ amount, orderName }: Props) {
     (async () => {
       const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
       if (!clientKey) {
-        console.error(
-          "❗ NEXT_PUBLIC_TOSS_CLIENT_KEY가 설정되지 않았어요 (.env.local / Vercel 환경변수 확인)"
-        );
+        console.error("❗ NEXT_PUBLIC_TOSS_CLIENT_KEY가 설정되지 않았어요 (.env.local / Vercel 환경변수 확인)");
         return;
       }
 
@@ -62,22 +52,19 @@ export default function PaymentWidgetClient({ amount, orderName }: Props) {
       setWidget(w);
     })();
 
-    return () => {
-      mounted = false;
-    };
+    return () => { mounted = false; };
   }, [amount]);
 
   const onPay = async () => {
     if (!widget) return;
-    const origin =
-      typeof window !== "undefined" ? window.location.origin : "";
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
 
     await widget.requestPayment({
       orderId,
       orderName,
-      // 토스가 {paymentKey}를 실제 키로 치환해서 리다이렉트합니다.
-      successUrl: `${origin}/toss/confirm?orderId=${orderId}&amount=${amount}&paymentKey={paymentKey}`,
-      failUrl: `${origin}/fail`, // 실패 경로가 /toss/fail 이라면 여기만 /toss/fail 로
+      // ✅ Toss가 자동으로 paymentKey/orderId/amount를 붙여 줍니다.
+      successUrl: `${origin}/toss/confirm`,
+      failUrl: `${origin}/fail`, // 실패 경로가 /toss/fail 이면 여기만 /toss/fail 로 교체
     });
   };
 
