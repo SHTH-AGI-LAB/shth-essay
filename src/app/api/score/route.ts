@@ -1,14 +1,13 @@
 // src/app/api/score/route.ts
-
 import { NextRequest, NextResponse } from "next/server";
 import { UNIVERSITIES as UNIVERSITIES_RAW } from "../../../data/universities";
 import { supabaseAdmin } from "../../../lib/supabaseServer";
 
 /** ===== 설정 ===== */
-const API_VERSION = "score-api v4-db";
+const API_VERSION = "score-api v4-db+tickets";
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 const OPENAI_MODEL = process.env.OPENAI_MODEL ?? "gpt-4o-mini";
-const FREE_TRIAL_LIMIT = Number(process.env.FREE_TRIAL_LIMIT ?? "3") || 3; // 환경변수 or 기본값 3
+const FREE_TRIAL_LIMIT = Number(process.env.FREE_TRIAL_LIMIT ?? "3") || 3; // 기본 3
 const TRIAL_WINDOW_DAYS = 30;
 
 /** ===== 타입 ===== */
@@ -105,18 +104,28 @@ function buildPrompt(params: {
 /** ===== DB 로직: 사용자 사용량 ===== */
 type UsageRow = {
   email: string;
-  usage_count: number;
-  plan_type: "free" | "paid";
-  window_end: string | null; // ISO
+  usage_count: number;             // 무료 사용 누적
+  plan_type: "free" | "paid";      // (참고용; 무제한은 미사용)
+  window_end: string | null;       // ISO
+  standard_count: number;          // 스탠다드 잔여
+  premium_count: number;           // 프리미엄 잔여
+  vip_count: number;               // VIP 잔여
 };
 
 function now() { return Date.now(); }
 function daysFromNow(n: number) { return now() + n * 24 * 60 * 60 * 1000; }
 
+function freeRemainingOf(u: Pick<UsageRow, "usage_count">) {
+  return Math.max(0, FREE_TRIAL_LIMIT - (u.usage_count ?? 0));
+}
+function hasAnyPaid(u: Pick<UsageRow, "standard_count"|"premium_count"|"vip_count">) {
+  return (u.standard_count ?? 0) + (u.premium_count ?? 0) + (u.vip_count ?? 0) > 0;
+}
+
 async function getOrInitUsage(email: string): Promise<UsageRow> {
   const { data: row, error } = await supabaseAdmin
     .from("user_usage")
-    .select("email, usage_count, plan_type, window_end")
+    .select("email, usage_count, plan_type, window_end, standard_count, premium_count, vip_count")
     .eq("email", email)
     .maybeSingle();
 
@@ -128,6 +137,9 @@ async function getOrInitUsage(email: string): Promise<UsageRow> {
       usage_count: 0,
       plan_type: "free",
       window_end: new Date(daysFromNow(TRIAL_WINDOW_DAYS)).toISOString(),
+      standard_count: 0,
+      premium_count: 0,
+      vip_count: 0,
     };
     const { error: upErr } = await supabaseAdmin
       .from("user_usage")
@@ -137,14 +149,16 @@ async function getOrInitUsage(email: string): Promise<UsageRow> {
   }
 
   if (row.plan_type === "free") {
-    const expired =
-      !row.window_end || new Date(row.window_end).getTime() <= now();
+    const expired = !row.window_end || new Date(row.window_end).getTime() <= now();
     if (expired) {
       const resetRow: UsageRow = {
         email: row.email,
         usage_count: 0,
         plan_type: "free",
         window_end: new Date(daysFromNow(TRIAL_WINDOW_DAYS)).toISOString(),
+        standard_count: 0,
+        premium_count: 0,
+        vip_count: 0,
       };
       const { error: rstErr } = await supabaseAdmin
         .from("user_usage")
@@ -160,7 +174,7 @@ async function getOrInitUsage(email: string): Promise<UsageRow> {
 async function incrementUsage(email: string): Promise<UsageRow | null> {
   const { data: current, error: readErr } = await supabaseAdmin
     .from("user_usage")
-    .select("email, usage_count, plan_type, window_end")
+    .select("email, usage_count, plan_type, window_end, standard_count, premium_count, vip_count")
     .eq("email", email)
     .maybeSingle();
 
@@ -175,14 +189,49 @@ async function incrementUsage(email: string): Promise<UsageRow | null> {
       usage_count: (current.usage_count ?? 0) + 1,
     })
     .eq("email", email)
-    .select("email, usage_count, plan_type, window_end")
+    .select("email, usage_count, plan_type, window_end, standard_count, premium_count, vip_count")
     .maybeSingle();
 
   if (updateErr) {
     console.error("업데이트 오류:", updateErr);
     return null;
   }
+  return updated as UsageRow;
+}
 
+/** 유료권 1회 차감(우선순위: standard → premium → vip) */
+async function consumeOnePaid(email: string): Promise<UsageRow | null> {
+  const { data: current, error: readErr } = await supabaseAdmin
+    .from("user_usage")
+    .select("email, usage_count, plan_type, window_end, standard_count, premium_count, vip_count")
+    .eq("email", email)
+    .maybeSingle();
+
+  if (readErr || !current) {
+    console.error("읽기 오류:", readErr);
+    return null;
+  }
+
+  const dec: Partial<UsageRow> = {};
+  if ((current.standard_count ?? 0) > 0) dec.standard_count = (current.standard_count ?? 0) - 1;
+  else if ((current.premium_count ?? 0) > 0) dec.premium_count = (current.premium_count ?? 0) - 1;
+  else if ((current.vip_count ?? 0) > 0) dec.vip_count = (current.vip_count ?? 0) - 1;
+  else {
+    // 차감할 게 없음
+    return current as UsageRow;
+  }
+
+  const { data: updated, error: updateErr } = await supabaseAdmin
+    .from("user_usage")
+    .update(dec)
+    .eq("email", email)
+    .select("email, usage_count, plan_type, window_end, standard_count, premium_count, vip_count")
+    .maybeSingle();
+
+  if (updateErr) {
+    console.error("유료권 차감 실패:", updateErr);
+    return null;
+  }
   return updated as UsageRow;
 }
 
@@ -211,9 +260,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // 사용량 조회
     const usage = await getOrInitUsage(userEmail);
+    const freeLeft = freeRemainingOf(usage);
+    const paidExists = hasAnyPaid(usage);
 
-    if (usage.plan_type !== "paid" && usage.usage_count >= FREE_TRIAL_LIMIT) {
+    // 무료/유료권 모두 없음 → 결제 유도 (요구사항 ①)
+    if (freeLeft <= 0 && !paidExists) {
       return NextResponse.json(
         {
           error: "PAYWALL_REQUIRED",
@@ -221,16 +274,16 @@ export async function POST(req: NextRequest) {
           usageCount: usage.usage_count,
           remaining: 0,
           planType: usage.plan_type,
-          },
+        },
         { status: 402 }
       );
     }
 
+    // 대학/문항 검증
     const uni = findUniversity(uniInput);
     if (!uni) {
       return NextResponse.json({ error: `Unknown university: ${uniInput}` }, { status: 404 });
     }
-
     const qKey = normalizeQuestionKey(uni, questionId!);
     if (!qKey) {
       return NextResponse.json(
@@ -238,7 +291,6 @@ export async function POST(req: NextRequest) {
         { status: 404 }
       );
     }
-
     const criterion = getCriterion(uni, qKey);
     if (!criterion) {
       return NextResponse.json(
@@ -247,6 +299,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // 프롬프트 생성
     const prompt = buildPrompt({
       university: uni,
       questionKey: qKey,
@@ -255,6 +308,7 @@ export async function POST(req: NextRequest) {
       questionText,
     });
 
+    // OpenAI 호출
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       return NextResponse.json({ error: "Missing OPENAI_API_KEY" }, { status: 500 });
@@ -282,6 +336,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: `OpenAI error: ${resAI.status} ${text}` }, { status: 502 });
     }
 
+    // OpenAI 결과 파싱
     const data = (await resAI.json()) as OpenAIResponse;
     const content = data?.choices?.[0]?.message?.content;
 
@@ -338,18 +393,23 @@ export async function POST(req: NextRequest) {
       ];
     }
 
-    let updatedUsage = usage;
-    if (usage.plan_type === "free") {
+    // === 사용량 갱신 ===
+    // 성공 응답일 때만 차감/증가 (요구사항 ②③)
+    let updatedUsage: UsageRow = usage;
+
+    if (freeLeft > 0) {
+      // 무료 남아 있으면 무료 사용 +1
       updatedUsage = (await incrementUsage(usage.email)) ?? usage;
+    } else if (paidExists) {
+      // 무료는 소진, 유료권 보유 → 유료권 1회 차감
+      updatedUsage = (await consumeOnePaid(usage.email)) ?? usage;
     }
 
-    const remaining =
-      updatedUsage.plan_type === "paid"
-        ? null
-        : Math.max(0, FREE_TRIAL_LIMIT - updatedUsage.usage_count);
+    // 남은 무료 회수(표시용)
+    const remainingFree = freeRemainingOf(updatedUsage);
 
     return NextResponse.json(
-      { 
+      {
         university: uni.slug,
         questionId: qKey,
         score,
@@ -360,9 +420,14 @@ export async function POST(req: NextRequest) {
         edits,
         model: OPENAI_MODEL,
         usageCount: updatedUsage.usage_count,
-        remaining,
+        remaining: remainingFree,
         planType: updatedUsage.plan_type,
         windowEnd: updatedUsage.window_end,
+        // (선택) 클라이언트가 참고할 수 있도록 유료 잔여도 내려줌
+        standardCount: updatedUsage.standard_count,
+        premiumCount: updatedUsage.premium_count,
+        vipCount: updatedUsage.vip_count,
+        apiVersion: API_VERSION,
       },
       { status: 200 }
     );

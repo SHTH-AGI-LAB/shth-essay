@@ -7,7 +7,8 @@ import { useSession, signOut } from "next-auth/react";
 
 type Usage = {
   email: string;
-  plan: "free" | "standard" | "premium" | "vip";
+  // API는 현재 'free' | 'paid' 만 반환 → 타입 정리
+  plan: "free" | "paid";
   usageCount: number;
   freeLimit: number;
   freeRemaining: number;
@@ -44,8 +45,8 @@ function Badge({
 export default function Header() {
   const router = useRouter();
   const { data: session, status } = useSession();
-
-  const [usage, setUsage] = useState<Usage | null>(null);
+  const [usage, setUsage] = useState<Usage | null>(null); 
+  const [open, setOpen] = useState(false); // 모바일 메뉴 토글
 
   // 로그인 상태에서만 호출
   useEffect(() => {
@@ -57,7 +58,7 @@ export default function Header() {
     (async () => {
       try {
         const res = await fetch("/api/me/usage", { cache: "no-store" });
-        if (!res.ok) return; // 실패 시 조용히 무시 (헤더만)
+        if (!res.ok) return;
         const data = (await res.json()) as Usage;
         if (alive) setUsage(data);
       } catch {
@@ -70,6 +71,22 @@ export default function Header() {
   }, [status]);
 
   const goLogin = () => router.push("/login");
+
+  const Badges = () =>
+    usage ? (
+      <div className="flex items-center gap-2">
+        {usage.freeRemaining > 0 && (
+          <Badge label="무료" value={usage.freeRemaining} tone="blue" />
+        )}
+        {usage.standardCount > 0 && (
+          <Badge label="스탠다드" value={usage.standardCount} tone="emerald" />
+        )}
+        {usage.premiumCount > 0 && (
+          <Badge label="프리미어" value={usage.premiumCount} tone="amber" />
+        )}
+        {usage.vipCount > 0 && <Badge label="VIP" value={usage.vipCount} tone="purple" />}
+      </div>
+    ) : null;
 
   return (
     <header className="sticky top-0 z-50 border-b bg-white/90 backdrop-blur">
@@ -86,54 +103,18 @@ export default function Header() {
 
         {/* 데스크톱 메뉴 */}
         <div className="hidden items-center gap-5 text-sm md:flex">
-          <Link href="/about" className="hover:underline">
-            소개
-          </Link>
-          <Link href="/payment" className="hover:underline">
-            결제방식
-          </Link>
-          <Link href="/refund" className="hover:underline">
-            환불정책
-          </Link>
-          <Link href="/terms" className="hover:underline">
-            이용약관
-          </Link>
-          <Link href="/privacy" className="hover:underline">
-            개인정보
-          </Link>
+          <Link href="/about" className="hover:underline">소개</Link>
+          <Link href="/payment" className="hover:underline">결제방식</Link>
+          <Link href="/refund" className="hover:underline">환불정책</Link>
+          <Link href="/terms" className="hover:underline">이용약관</Link>
+          <Link href="/privacy" className="hover:underline">개인정보</Link>
 
           {status === "authenticated" ? (
             <>
               <span className="text-gray-700">
                 안녕하세요, {session?.user?.name ?? "회원"}님~
               </span>
-
-              {/* ✅ 보유한 것만 표시 */}
-              {usage && (
-                <div className="flex items-center gap-2">
-                  {usage.freeRemaining > 0 && (
-                    <Badge label="무료" value={usage.freeRemaining} tone="blue" />
-                  )}
-                  {usage.standardCount > 0 && (
-                    <Badge
-                      label="스탠다드"
-                      value={usage.standardCount}
-                      tone="emerald"
-                    />
-                  )}
-                  {usage.premiumCount > 0 && (
-                    <Badge
-                      label="프리미어"
-                      value={usage.premiumCount}
-                      tone="amber"
-                    />
-                  )}
-                  {usage.vipCount > 0 && (
-                    <Badge label="VIP" value={usage.vipCount} tone="purple" />
-                  )}
-                </div>
-              )}
-
+              <Badges />
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}
                 className="rounded-lg bg-gray-200 px-3 py-1.5 transition hover:bg-gray-300"
@@ -151,15 +132,62 @@ export default function Header() {
           )}
         </div>
 
-        {/* 모바일 햄버거는 그대로 두고, 배지는 상단 데스크톱에서만 표기 */}
+        {/* 모바일: 햄버거 → 메뉴 토글 */}
         <button
+          type="button"
           aria-label="메뉴 열기"
-          className="rounded p-2 md:hidden"
-          onClick={goLogin}
+          aria-expanded={open}
+          aria-controls="mobile-menu"
+          className="rounded p-2 md:hidden border"
+          onClick={() => setOpen((v) => !v)}
+          onTouchStart={() => setOpen((v) => !v)} // Android 보조
         >
           ☰
         </button>
       </nav>
+
+      {/* 모바일 메뉴 패널 */}
+      <div
+        id="mobile-menu"
+        className={`${open ? "block" : "hidden"} md:hidden border-t bg-white px-4 pb-4`}
+      >
+        <div className="flex flex-col gap-3 py-3 text-sm">
+          {status === "authenticated" ? (
+            <>
+              <span className="text-gray-700">
+                안녕하세요, {session?.user?.name ?? "회원"}님~
+              </span>
+              <Badges />
+              <div className="h-px bg-gray-200" />
+              <Link href="/about" className="py-1">소개</Link>
+              <Link href="/payment" className="py-1">결제방식</Link>
+              <Link href="/refund" className="py-1">환불정책</Link>
+              <Link href="/terms" className="py-1">이용약관</Link>
+              <Link href="/privacy" className="py-1">개인정보</Link>
+              <button
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="mt-2 w-full rounded-lg bg-gray-200 py-2 font-medium"
+              >
+                로그아웃
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href="/about" className="py-1">소개</Link>
+              <Link href="/payment" className="py-1">결제방식</Link>
+              <Link href="/refund" className="py-1">환불정책</Link>
+              <Link href="/terms" className="py-1">이용약관</Link>
+              <Link href="/privacy" className="py-1">개인정보</Link>
+              <button
+                onClick={goLogin}
+                className="mt-2 w-full rounded-lg bg-blue-600 py-2 font-medium text-white"
+              >
+                로그인
+              </button>
+            </>
+          )}
+        </div>
+      </div>
     </header>
   );
 }
