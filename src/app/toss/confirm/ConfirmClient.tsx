@@ -13,7 +13,7 @@ type ConfirmResponse = {
   status?: number;
   tossCode?: string;
   tossMessage?: string;
-  echo?: any;
+  echo?: Record<string, unknown>;
 };
 
 export default function ConfirmClient() {
@@ -49,15 +49,16 @@ export default function ConfirmClient() {
 
         const json = (await res.json()) as ConfirmResponse;
 
-        if (res.ok && json?.ok) {
+        if (res.ok && (json as ConfirmResponse)?.ok) {
   setStatus("ok");
   setMsg("결제가 완료되었어요. 이용권이 충전되었습니다.");
 } else {
+  const j = json as ConfirmResponse;
   const lines = [
-    json?.error ?? "결제 확인 중 오류가 발생했어요.",
-    json?.tossCode ? `code: ${json.tossCode}` : "",
-    json?.tossMessage ? `message: ${json.tossMessage}` : "",
-    typeof json?.status === "number" ? `status: ${json.status}` : "",
+    j.error ?? "결제 확인 중 오류가 발생했어요.",
+    j.tossCode ? `code: ${j.tossCode}` : "",
+    j.tossMessage ? `message: ${j.tossMessage}` : "",
+    typeof j.status === "number" ? `status: ${j.status}` : "",
   ].filter(Boolean);
   setStatus("fail");
   setMsg(lines.join("\n"));
