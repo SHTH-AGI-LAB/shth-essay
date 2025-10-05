@@ -3,7 +3,7 @@ import { loadTossPayments } from "@tosspayments/payment-sdk";
 
 type Props = {
   amount: number;
-  orderName: string;
+  orderName: string; // "standard" | "premium" | "vip" 처럼 사용 중
 };
 
 export default function PayButton({ amount, orderName }: Props) {
@@ -12,14 +12,17 @@ export default function PayButton({ amount, orderName }: Props) {
       process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY as string
     );
 
-    const orderId = `order-${Date.now()}`;
+    // ✅ 매 결제마다 고유한 orderId (중복 금지)
+    const orderId = `drphy-${orderName}-${Date.now()}`;
 
+    // ✅ successUrl/ failUrl 에 "파라미터 붙이지 마세요"
+    //    (토스가 자동으로 paymentKey, orderId, amount 붙여줌)
     await tossPayments.requestPayment("카드", {
       amount,
       orderId,
       orderName,
-      successUrl: `${window.location.origin}/pay/success`,
-      failUrl: `${window.location.origin}/pay/fail`,
+      successUrl: `${window.location.origin}/toss/confirm`,
+      failUrl: `${window.location.origin}/toss/fail`,
     });
   };
 
@@ -31,4 +34,4 @@ export default function PayButton({ amount, orderName }: Props) {
       결제하기
     </button>
   );
-}
+} 
