@@ -1,4 +1,5 @@
 // src/app/api/score/route.ts
+
 import { NextRequest, NextResponse } from "next/server";
 import { UNIVERSITIES as UNIVERSITIES_RAW } from "../../../data/universities";
 import { supabaseAdmin } from "../../../lib/supabaseServer";
