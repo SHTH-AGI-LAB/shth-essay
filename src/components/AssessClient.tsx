@@ -1,7 +1,7 @@
 // src/components/AssessClient.tsx
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { UNIVERSITIES } from "@/data/universities";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -34,8 +34,8 @@ type UsageInfo = {
   premiumCount: number;
   vipCount: number;
   standardCount: number;
-  windowEnd: string | null;       // ISO
-  usageExpiryDays?: number;       // e.g., 180
+  windowEnd: string | null;  // ISO
+  usageExpiryDays?: number;  // e.g., 180
 };
 
 function toGrade(total100: number) {
@@ -96,7 +96,10 @@ export default function AssessClient({ slug }: Props) {
         setUsageLoading(true);
         const res = await fetch("/api/me/usage", { cache: "no-store" });
         const data = (await res.json()) as UsageInfo | { error?: string; detail?: string };
-        if (!res.ok) throw new Error((data as any)?.detail || (data as any)?.error || "사용량 조회 실패");
+        if (!res.ok) {
+          const d = data as { error?: string; detail?: string };
+          throw new Error(d?.detail || d?.error || "사용량 조회 실패");
+        }
         setUsage(data as UsageInfo);
       } catch (e) {
         console.error(e);
@@ -126,7 +129,7 @@ export default function AssessClient({ slug }: Props) {
     if (res.status === 402) {
       const payload = (await res.json()) as { message?: string };
       alert(payload?.message || "이용권이 부족합니다. 결제 페이지로 이동합니다.");
-      router.push("/payment"); // 결제 페이지 경로에 맞게 조정
+      router.push("/payment");
       return null;
     }
 
@@ -150,7 +153,7 @@ export default function AssessClient({ slug }: Props) {
     return r;
   }
 
-  /** 페이월 검사 */
+  /** 유료 버킷 보유 여부 */
   function hasAnyPaidTickets(info: UsageInfo | null) {
     if (!info) return false;
     return (info.premiumCount || 0) + (info.vipCount || 0) + (info.standardCount || 0) > 0;
@@ -272,7 +275,7 @@ export default function AssessClient({ slug }: Props) {
         )}
       </div>
 
-      {questionKeys.map((문제) => {
+      {questionKeys.map((문제: string) => {
         const criterion = (u.criteria as Partial<Record<string, Criterion>>)[문제];
         const desc = criterion?.desc ?? "";
         const weight = Number(criterion?.weight ?? 0);
@@ -286,9 +289,12 @@ export default function AssessClient({ slug }: Props) {
               {문제} ({weight}%)
             </h2>
             <p className="text-sm text-gray-600 mb-2">{desc}</p>
+
             <textarea
               value={answers[문제] || ""}
-              onChange={(e) => setAnswers((prev) => ({ ...prev, [문제]: e.target.value }))}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setAnswers((prev) => ({ ...prev, [문제]: e.target.value }))
+              }
               placeholder={`${문제} 답안을 입력하세요...`}
               className="w-full border p-2 rounded"
               rows={5}
@@ -304,10 +310,8 @@ export default function AssessClient({ slug }: Props) {
             {r?.rationale?.length ? (
               <div className="mt-3 bg-gray-50 border rounded p-3">
                 <h3 className="font-semibold mb-1">첨삭 코멘트</h3>
-                {r.rationale.map((c, i) => (
-                  <p key={i} className="text-sm">
-                    - {c}
-                  </p>
+                {r.rationale.map((c: string, i: number) => (
+                  <p key={i} className="text-sm">- {c}</p>
                 ))}
 
                 {r.overall ? (
@@ -321,7 +325,7 @@ export default function AssessClient({ slug }: Props) {
                   <div className="mt-3">
                     <h4 className="font-semibold">문장 수정 예시</h4>
                     <ul className="text-sm list-disc pl-5 space-y-1">
-                      {r.edits.map((e, i) => (
+                      {r.edits.map((e: { original: string; revision: string }, i: number) => (
                         <li key={i}>
                           <span className="font-medium">원문:</span> {e.original}
                           <br />

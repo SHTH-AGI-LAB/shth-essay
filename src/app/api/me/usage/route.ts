@@ -141,10 +141,11 @@ export async function GET() {
       windowEnd: row.window_end ?? null,
       usageExpiryDays: row.usage_expiry_days ?? expiryDays,
     });
-  } catch (e: any) {
-    return NextResponse.json(
-      { error: "SERVER_ERROR", detail: e?.message ?? String(e) },
-      { status: 500 }
-    );
+  } catch (e: unknown) {
+  const msg = e instanceof Error ? e.message : String(e);
+  return NextResponse.json(
+    { error: "SERVER_ERROR", detail: msg },
+    { status: 500 }
+  );
   }
 }
