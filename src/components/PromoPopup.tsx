@@ -9,6 +9,8 @@ const HIDE_PATHS_EXACT = new Set([
   "/success",
   "/fail",
   "/refund",
+  "/toss/confirm", 
+  "/toss/fail", 
 ]);
 
 const HIDE_PATH_PREFIX = ["/payment/"]; // /payment/[slug] 전체 차단
