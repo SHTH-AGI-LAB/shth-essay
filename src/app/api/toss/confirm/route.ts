@@ -4,24 +4,21 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getSupabaseAdmin } from "@/lib/supabaseServer";
 
-// 금액 → 상품 매핑
 const PLAN_BY_AMOUNT: Record<number, { plan: "standard" | "premium" | "vip"; qty: number }> = {
   29000: { plan: "standard", qty: 10 },
   79000: { plan: "premium", qty: 30 },
   199000: { plan: "vip", qty: 100 },
 };
 
-// Toss 응답 타입(성공/실패 최소 필드만 정의)
 type TossConfirmSuccess = {
   orderId: string;
   paymentKey: string;
-  status: string; // "DONE" 등
+  status: string;
   approvedAt?: string;
   [k: string]: unknown;
 };
 type TossError = { code?: string; message?: string };
 
-// 요청 바디 타입
 type ConfirmBody = { paymentKey?: string; orderId?: string; amount?: number };
 
 export async function POST(req: NextRequest) {
@@ -49,12 +46,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: "MISSING_TOSS_SECRET_KEY" }, { status: 500 });
     }
 
+    // ✅ (1) paymentKey 정리: { … } 혹은 URL 인코딩 잔재 제거
+    const cleanPaymentKey = String(paymentKey).replace(/[{}]/g, "");
+
     // Toss confirm 호출
     const authHeader = "Basic " + Buffer.from(`${secretKey}:`, "utf-8").toString("base64");
     const tossRes = await fetch("https://api.tosspayments.com/v1/payments/confirm", {
       method: "POST",
       headers: { Authorization: authHeader, "Content-Type": "application/json" },
-      body: JSON.stringify({ paymentKey, orderId, amount }),
+      body: JSON.stringify({
+        // ✅ (2) 여기서 반드시 정리된 키 사용
+        paymentKey: cleanPaymentKey,
+        orderId,
+        amount,
+      }),
     });
 
     const jsonUnknown = (await tossRes.json().catch(() => ({}))) as unknown;

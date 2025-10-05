@@ -1,23 +1,35 @@
+// src/components/PaymentWidgetClient.tsx
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { loadPaymentWidget, type PaymentWidgetInstance } from "@tosspayments/payment-widget-sdk";
+import {
+  loadPaymentWidget,
+  type PaymentWidgetInstance,
+} from "@tosspayments/payment-widget-sdk";
 
 type Props = {
-  amount: number;     // 29000 | 79000 | 199000
-  orderName: string;  // "스탠다드 10회" | "프리미어 30회" | "VIP 100회"
+  amount: number; // 29000 | 79000 | 199000
+  orderName: string; // "스탠다드 10회" | "프리미어 30회" | "VIP 100회"
 };
 
-function toPlanCode(orderName: string, amount: number): "std" | "pre" | "vip" {
+function toPlanCode(
+  orderName: string,
+  amount: number
+): "std" | "pre" | "vip" {
   const name = orderName.toLowerCase();
 
   if (name.includes("스탠다드") || name.includes("standard")) return "std";
-  if (name.includes("프리미어") || name.includes("프리미엄") || name.includes("premium")) return "pre";
+  if (
+    name.includes("프리미어") ||
+    name.includes("프리미엄") ||
+    name.includes("premium")
+  )
+    return "pre";
   if (name.includes("vip")) return "vip";
 
   // 보조 판정(가격기반)
   if (amount === 29000) return "std";
-  if (amount === 79000) return "pre";   // ✅ 69,000 → 79,000
+  if (amount === 79000) return "pre";
   return "vip";
 }
 
@@ -36,7 +48,9 @@ export default function PaymentWidgetClient({ amount, orderName }: Props) {
     (async () => {
       const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
       if (!clientKey) {
-        console.error("❗ NEXT_PUBLIC_TOSS_CLIENT_KEY가 설정되지 않았어요 (.env.local / Vercel 환경변수 확인)");
+        console.error(
+          "❗ NEXT_PUBLIC_TOSS_CLIENT_KEY가 설정되지 않았어요 (.env.local / Vercel 환경변수 확인)"
+        );
         return;
       }
 
@@ -48,19 +62,23 @@ export default function PaymentWidgetClient({ amount, orderName }: Props) {
       setWidget(w);
     })();
 
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, [amount]);
 
   const onPay = async () => {
     if (!widget) return;
-    const origin = typeof window !== "undefined" ? window.location.origin : "";
+    const origin =
+      typeof window !== "undefined" ? window.location.origin : "";
 
     await widget.requestPayment({
-     orderId,
-     orderName,
-     successUrl: `${origin}/toss/confirm?orderId=${orderId}&amount=${amount}&paymentKey={paymentKey}`, // ✅ 확실히 붙여줌
-     failUrl: `${origin}/fail`,
-     });
+      orderId,
+      orderName,
+      // 토스가 {paymentKey}를 실제 키로 치환해서 리다이렉트합니다.
+      successUrl: `${origin}/toss/confirm?orderId=${orderId}&amount=${amount}&paymentKey={paymentKey}`,
+      failUrl: `${origin}/fail`, // 실패 경로가 /toss/fail 이라면 여기만 /toss/fail 로
+    });
   };
 
   return (
@@ -71,7 +89,7 @@ export default function PaymentWidgetClient({ amount, orderName }: Props) {
       <button
         type="button"
         onClick={onPay}
-        disabled={!widget}               // 작은 안정장치
+        disabled={!widget}
         className="mt-6 px-4 py-2 rounded bg-blue-600 text-white disabled:opacity-50"
       >
         결제하기
