@@ -5,7 +5,7 @@ import { getSupabaseAdmin } from "@/lib/supabaseServer";
 const supabaseAdmin = getSupabaseAdmin();
 
 /** ===== 설정 ===== */
-const API_VERSION = "score-api v4-db+tickets";
+const API_VERSION = "";
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 const OPENAI_MODEL = process.env.OPENAI_MODEL ?? "gpt-4o-mini";
 const FREE_TRIAL_LIMIT = Number(process.env.FREE_TRIAL_LIMIT ?? "3") || 3; // 기본 3
