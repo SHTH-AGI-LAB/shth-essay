@@ -5,6 +5,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { UNIVERSITIES } from "@/data/universities";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import LoadingPopup from "@/components/LoadingPopup";
 
 type University = (typeof UNIVERSITIES)[number];
 type Criterion = { desc: string; weight: number };
@@ -356,6 +357,8 @@ export default function AssessClient({ slug }: Props) {
           인쇄 / PDF 저장
         </button>
       </div>
+
+      {loading && <LoadingPopup open={true} message="문제당 -1 💙 AI가 글을 분석 중이에요" />}
 
       {summary && (
         <div className="mt-6 border-t pt-4">
