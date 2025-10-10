@@ -1,5 +1,4 @@
-// src/app/api/auth/[...nextauth]/route.ts
-import NextAuth, { type NextAuthOptions } from "next-auth";
+import NextAuth, { type NextAuthOptions } from "next-auth"; 
 import GoogleProvider from "next-auth/providers/google";
 import NaverProvider from "next-auth/providers/naver";
 import KakaoProvider from "next-auth/providers/kakao";
@@ -20,12 +19,26 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
 
-  // 세션에 이메일 확실히 싣기 (클라이언트에서 session.user.email 사용)
+  // 1) App Router에선 jwt 전략을 권장
+  session: { strategy: "jwt" },
+
+  // 2) 최초 로그인 때 토큰에 이메일을 확실히 심고,
+  //    클라이언트로 넘어가는 session.user.email에 실어준다.
   callbacks: {
+    async jwt({ token, user, account }) {
+      // 첫 로그인 시
+      if (user?.email) token.email = user.email;
+      // (필요하면) provider 정보나 access_token도 실을 수 있어요
+      if (account?.provider) (token as any).provider = account.provider;
+      if (account?.access_token) (token as any).accessToken = account.access_token;
+      return token;
+    },
     async session({ session, token }) {
       if (session.user && token?.email) {
         session.user.email = token.email as string;
       }
+      // (선택) 클라이언트에서 필요하면 accessToken도 노출
+      if ((token as any).accessToken) (session as any).accessToken = (token as any).accessToken;
       return session;
     },
   },
