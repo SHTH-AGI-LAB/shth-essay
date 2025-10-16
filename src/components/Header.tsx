@@ -7,7 +7,6 @@ import { useSession, signOut } from "next-auth/react";
 
 type Usage = {
   email: string;
-  // API는 현재 'free' | 'paid' 만 반환 → 타입 정리
   plan: "free" | "paid";
   usageCount: number;
   freeLimit: number;
@@ -45,10 +44,9 @@ function Badge({
 export default function Header() {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const [usage, setUsage] = useState<Usage | null>(null); 
-  const [open, setOpen] = useState(false); // 모바일 메뉴 토글
+  const [usage, setUsage] = useState<Usage | null>(null);
+  const [open, setOpen] = useState(false);
 
-  // 로그인 상태에서만 호출
   useEffect(() => {
     if (status !== "authenticated") {
       setUsage(null);
@@ -89,7 +87,9 @@ export default function Header() {
     ) : null;
 
   return (
-    <header className="sticky top-0 z-50 border-b bg-white/90 backdrop-blur">
+    <header
+      className="sticky top-0 z-50 w-full border-b border-[var(--line)] bg-[var(--background)] backdrop-blur text-[var(--foreground)]"
+    >
       <nav className="mx-auto flex max-w-4xl items-center justify-between p-4">
         {/* 홈 */}
         <Link href="/" className="inline-flex items-center gap-2">
@@ -103,21 +103,21 @@ export default function Header() {
 
         {/* 데스크톱 메뉴 */}
         <div className="hidden items-center gap-5 text-sm md:flex">
-          <Link href="/about" className="hover:underline">소개</Link>
-          <Link href="/payment" className="hover:underline">결제방식</Link>
-          <Link href="/refund" className="hover:underline">환불정책</Link>
-          <Link href="/terms" className="hover:underline">이용약관</Link>
-          <Link href="/privacy" className="hover:underline">개인정보</Link>
+          <Link href="/about" className="text-[var(--foreground)] hover:opacity-80">소개</Link>
+          <Link href="/payment" className="text-[var(--foreground)] hover:opacity-80">결제방식</Link>
+          <Link href="/refund" className="text-[var(--foreground)] hover:opacity-80">환불정책</Link>
+          <Link href="/terms" className="text-[var(--foreground)] hover:opacity-80">이용약관</Link>
+          <Link href="/privacy" className="text-[var(--foreground)] hover:opacity-80">개인정보</Link>
 
           {status === "authenticated" ? (
             <>
-              <span className="text-gray-700">
+              <span className="text-[var(--foreground)]">
                 안녕하세요, {session?.user?.name ?? "회원"}님~
               </span>
               <Badges />
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}
-                className="rounded-lg bg-gray-200 px-3 py-1.5 transition hover:bg-gray-300"
+                className="rounded-lg border border-[var(--line)] bg-[var(--card)] px-3 py-1.5 text-[var(--card-foreground)] transition hover:opacity-90"
               >
                 로그아웃
               </button>
@@ -125,7 +125,7 @@ export default function Header() {
           ) : (
             <button
               onClick={goLogin}
-              className="rounded-lg bg-blue-600 px-3 py-1.5 text-white transition hover:bg-blue-700"
+              className="rounded-lg bg-blue-600 px-3 py-1.5 text-white transition hover:brightness-110"
             >
               로그인
             </button>
@@ -138,9 +138,9 @@ export default function Header() {
           aria-label="메뉴 열기"
           aria-expanded={open}
           aria-controls="mobile-menu"
-          className="rounded p-2 md:hidden border"
+          className="rounded border border-[var(--line)] p-2 md:hidden"
           onClick={() => setOpen((v) => !v)}
-          onTouchStart={() => setOpen((v) => !v)} // Android 보조
+          onTouchStart={() => setOpen((v) => !v)}
         >
           ☰
         </button>
@@ -149,38 +149,38 @@ export default function Header() {
       {/* 모바일 메뉴 패널 */}
       <div
         id="mobile-menu"
-        className={`${open ? "block" : "hidden"} md:hidden border-t bg-white px-4 pb-4`}
+        className={`${open ? "block" : "hidden"} md:hidden border-t border-[var(--line)] bg-[var(--background)] px-4 pb-4`}
       >
         <div className="flex flex-col gap-3 py-3 text-sm">
           {status === "authenticated" ? (
             <>
-              <span className="text-gray-700">
+              <span className="text-[var(--foreground)]">
                 안녕하세요, {session?.user?.name ?? "회원"}님~
               </span>
               <Badges />
-              <div className="h-px bg-gray-200" />
-              <Link href="/about" className="py-1">소개</Link>
-              <Link href="/payment" className="py-1">결제방식</Link>
-              <Link href="/refund" className="py-1">환불정책</Link>
-              <Link href="/terms" className="py-1">이용약관</Link>
-              <Link href="/privacy" className="py-1">개인정보</Link>
+              <div className="h-px bg-[var(--line)]" />
+              <Link href="/about" className="py-1 text-[var(--foreground)]">소개</Link>
+              <Link href="/payment" className="py-1 text-[var(--foreground)]">결제방식</Link>
+              <Link href="/refund" className="py-1 text-[var(--foreground)]">환불정책</Link>
+              <Link href="/terms" className="py-1 text-[var(--foreground)]">이용약관</Link>
+              <Link href="/privacy" className="py-1 text-[var(--foreground)]">개인정보</Link>
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}
-                className="mt-2 w-full rounded-lg bg-gray-200 py-2 font-medium"
+                className="mt-2 w-full rounded-lg border border-[var(--line)] bg-[var(--card)] py-2 font-medium text-[var(--card-foreground)] hover:opacity-90"
               >
                 로그아웃
               </button>
             </>
           ) : (
             <>
-              <Link href="/about" className="py-1">소개</Link>
-              <Link href="/payment" className="py-1">결제방식</Link>
-              <Link href="/refund" className="py-1">환불정책</Link>
-              <Link href="/terms" className="py-1">이용약관</Link>
-              <Link href="/privacy" className="py-1">개인정보</Link>
+              <Link href="/about" className="py-1 text-[var(--foreground)]">소개</Link>
+              <Link href="/payment" className="py-1 text-[var(--foreground)]">결제방식</Link>
+              <Link href="/refund" className="py-1 text-[var(--foreground)]">환불정책</Link>
+              <Link href="/terms" className="py-1 text-[var(--foreground)]">이용약관</Link>
+              <Link href="/privacy" className="py-1 text-[var(--foreground)]">개인정보</Link>
               <button
                 onClick={goLogin}
-                className="mt-2 w-full rounded-lg bg-blue-600 py-2 font-medium text-white"
+                className="mt-2 w-full rounded-lg bg-blue-600 py-2 font-medium text-white hover:brightness-110"
               >
                 로그인
               </button>
