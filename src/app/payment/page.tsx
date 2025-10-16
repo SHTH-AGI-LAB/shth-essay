@@ -91,7 +91,7 @@ const PLANS = [
           <h3 className="text-lg font-semibold mb-3">이용 안내</h3>
           <ol className="list-decimal list-inside text-sm text-gray-700 space-y-1">
             <li>결제 후, 첨삭받고 싶은 대학을 선택하고 글을 업로드합니다.</li>
-            <li>AI첨삭은 로딩 시간 약 2-3초 후 즉시 형성됩니다.</li>
+            <li>AI첨삭은 로딩 시간 약 10초 후 즉시 형성됩니다.</li>
             <li>프리미어 이상 에어래빗 첨삭은 2일이내 문서로 제공됩니다.</li>
           </ol>
         </div>
