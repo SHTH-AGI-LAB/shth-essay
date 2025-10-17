@@ -8,18 +8,15 @@ import {
 } from "@tosspayments/payment-widget-sdk";
 
 type Props = {
-  amount: number;      // 29000 | 79000 | 199000
-  orderName: string;   // "스탠다드 10회" | "프리미어 30회" | "VIP 100회"
+  amount: number;
+  orderName: string;
 };
 
 function toPlanCode(orderName: string, amount: number): "std" | "pre" | "vip" {
   const name = orderName.toLowerCase();
-
   if (name.includes("스탠다드") || name.includes("standard")) return "std";
-  if (name.includes("프리미어") || name.includes("프리미엄") || name.includes("premium")) return "pre";
+  if (name.includes("프리미엄") || name.includes("premium")) return "pre";
   if (name.includes("vip")) return "vip";
-
-  // 보조 판정(가격기반)
   if (amount === 29000) return "std";
   if (amount === 79000) return "pre";
   return "vip";
@@ -28,7 +25,6 @@ function toPlanCode(orderName: string, amount: number): "std" | "pre" | "vip" {
 export default function PaymentWidgetClient({ amount, orderName }: Props) {
   const [widget, setWidget] = useState<PaymentWidgetInstance | null>(null);
 
-  // drphy-<plan>-<timestamp>
   const orderId = useMemo(() => {
     const plan = toPlanCode(orderName, amount);
     return `drphy-${plan}-${Date.now()}`;
@@ -47,12 +43,19 @@ export default function PaymentWidgetClient({ amount, orderName }: Props) {
       const w = await loadPaymentWidget(clientKey, "ANONYMOUS");
       if (!mounted) return;
 
-      await w.renderPaymentMethods("#payment-methods", { value: amount });
+      // ✅ 가상계좌 제거, 타입오류 방지를 위해 as any 사용
+      await (w as any).renderPaymentMethods("#payment-methods", {
+        value: amount,
+        enabledPaymentMethods: ["CARD", "TRANSFER"],
+      });
+
       await w.renderAgreement("#agreements");
       setWidget(w);
     })();
 
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, [amount]);
 
   const onPay = async () => {
@@ -62,9 +65,8 @@ export default function PaymentWidgetClient({ amount, orderName }: Props) {
     await widget.requestPayment({
       orderId,
       orderName,
-      // ✅ Toss가 자동으로 paymentKey/orderId/amount를 붙여 줍니다.
       successUrl: `${origin}/toss/confirm`,
-      failUrl: `${origin}/fail`, // 실패 경로가 /toss/fail 이면 여기만 /toss/fail 로 교체
+      failUrl: `${origin}/fail`,
     });
   };
 
@@ -72,7 +74,6 @@ export default function PaymentWidgetClient({ amount, orderName }: Props) {
     <div>
       <div id="payment-methods" />
       <div id="agreements" className="mt-4" />
-
       <button
         type="button"
         onClick={onPay}
