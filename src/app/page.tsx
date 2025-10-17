@@ -72,9 +72,9 @@ export default function Home() {
 
         {/* 푸터 */}
         <footer className="mt-20 border-t border-[var(--line)] pt-8 text-center text-sm">
-          <p className="mb-2 opacity-90">“지금 쓰는 한 줄이, 당신의 미래를 만든다.”</p>
-          <p className="mb-2 opacity-90">순간의 글을 미래로 이어주는 AI 첨삭.</p>
-          <p className="italic text-indigo-500">누구에게나 열려있는 대입논술 이제 편하게 공부하세요.</p>
+          <p className="mb-2 opacity-90">“지금 쓰는 한 줄이, 당신의 미래를 만든다”</p>
+          <p className="mb-2 opacity-90">순간의 글을 미래로 이어주는 AI 첨삭</p>
+          <p className="italic text-indigo-500">누구에게나 열려있는 대입논술</p>
 
           {/* 사업자 정보 (심사용) */}
           <div className="mt-6 text-xs leading-5 opacity-70">
@@ -84,7 +84,7 @@ export default function Home() {
           </div>
 
           <div className="mt-4 text-xs opacity-60">
-            © 2025 주식회사 에어래빗 AIrabbit Inc. All Rights Reserved.
+            © 2025 주식회사 AIrabbit Inc. All Rights Reserved.
           </div>
         </footer>
       </div>
