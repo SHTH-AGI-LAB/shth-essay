@@ -78,7 +78,7 @@ export default function PromoPopup() {
     </div>
 
     {/* 타이틀 */}
-    <h2 className="text-xl font-bold mb-2 text-center">2026 대입논술 이벤트</h2>
+    <h2 className="text-xl font-bold mb-2 text-center">2027 대입논술 이벤트</h2>
 
     {/* 본문 */}
     <p className="text-sm mb-3 text-center">

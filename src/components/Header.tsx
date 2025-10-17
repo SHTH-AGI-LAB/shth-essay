@@ -47,6 +47,22 @@ export default function Header() {
   const [usage, setUsage] = useState<Usage | null>(null);
   const [open, setOpen] = useState(false);
 
+  // ✅ 안드로이드 “두 번 토글” 방지: 단일 포인터 이벤트 핸들러
+  const toggleMenu = (e: any) => {
+    e?.preventDefault?.();
+    e?.stopPropagation?.();
+    setOpen((v) => !v);
+  };
+
+  // (옵션) 열려 있을 때 바깥 클릭하면 닫기
+  useEffect(() => {
+    if (!open) return;
+    const close = () => setOpen(false);
+    window.addEventListener("click", close, { once: true });
+    return () => window.removeEventListener("click", close);
+  }, [open]);
+
+  // 로그인 상태에서만 usage 호출
   useEffect(() => {
     if (status !== "authenticated") {
       setUsage(null);
@@ -87,9 +103,7 @@ export default function Header() {
     ) : null;
 
   return (
-    <header
-      className="sticky top-0 z-50 w-full border-b border-[var(--line)] bg-[var(--background)] backdrop-blur text-[var(--foreground)]"
-    >
+    <header className="sticky top-0 z-50 w-full border-b border-[var(--line)] bg-[var(--background)] backdrop-blur text-[var(--foreground)]">
       <nav className="mx-auto flex max-w-4xl items-center justify-between p-4">
         {/* 홈 */}
         <Link href="/" className="inline-flex items-center gap-2">
@@ -138,9 +152,8 @@ export default function Header() {
           aria-label="메뉴 열기"
           aria-expanded={open}
           aria-controls="mobile-menu"
-          className="rounded border border-[var(--line)] p-2 md:hidden"
-          onClick={() => setOpen((v) => !v)}
-          onTouchStart={() => setOpen((v) => !v)}
+          onPointerUp={toggleMenu} // ← 단일 이벤트로 통합
+          className="rounded border border-[var(--line)] p-2 md:hidden select-none active:opacity-80 [touch-action:manipulation]"
         >
           ☰
         </button>
