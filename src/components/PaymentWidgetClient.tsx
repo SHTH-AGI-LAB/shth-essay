@@ -43,11 +43,11 @@ export default function PaymentWidgetClient({ amount, orderName }: Props) {
       const w = await loadPaymentWidget(clientKey, "ANONYMOUS");
       if (!mounted) return;
 
-      // ✅ 가상계좌 제거, 타입오류 방지를 위해 as any 사용
-      await (w as any).renderPaymentMethods("#payment-methods", {
-        value: amount,
-        enabledPaymentMethods: ["CARD", "TRANSFER"],
-      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+await (w as any).renderPaymentMethods("#payment-methods", {
+  value: amount,
+  enabledPaymentMethods: ["CARD", "TRANSFER"], // ← 가상계좌 제거
+});
 
       await w.renderAgreement("#agreements");
       setWidget(w);
