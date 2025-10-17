@@ -1,6 +1,7 @@
 // src/components/Header.tsx
 "use client";
 import { useEffect, useState } from "react";
+import type React from "react";   
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
@@ -48,10 +49,10 @@ export default function Header() {
   const [open, setOpen] = useState(false);
 
   // ✅ 안드로이드 “두 번 토글” 방지: 단일 포인터 이벤트 핸들러
-  const toggleMenu = (e: any) => {
-    e?.preventDefault?.();
-    e?.stopPropagation?.();
-    setOpen((v) => !v);
+  const toggleMenu = (e: React.PointerEvent<HTMLButtonElement>) => {
+  e.preventDefault();
+  e.stopPropagation();
+  setOpen(v => !v);
   };
 
   // (옵션) 열려 있을 때 바깥 클릭하면 닫기
