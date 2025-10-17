@@ -47,8 +47,8 @@ export default function Home() {
             priority
             className="mb-3 h-44 sm:h-48 w-auto"
           />
-          <p className="mt-2 text-sm sm:text-base opacity-90">
-            에어래빗에서 만든 학교별 채점기준 코딩 AI첨삭기
+          <p className="mt-3 text-lg sm:text-xl font-semibold opacity-100">
+            🔐구글 로그인 무료3회 대학별 AI 20초 완성
           </p>
         </div>
 
