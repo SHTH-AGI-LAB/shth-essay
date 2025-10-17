@@ -70,7 +70,7 @@ function LoginInner() {
         <div className="mb-5 text-center">
           <h1 className="text-2xl font-extrabold text-blue-600 dark:text-blue-400">닥터필리스</h1>
           <p className="mt-3 text-lg sm:text-xl font-semibold opacity-100">
-            🔐 로그인하면 AI 논술 첨삭을 바로 시작할 수 있어요!
+            🔐 로그인 AI 논술 첨삭 무료3회!
           </p>
         </div>
 
