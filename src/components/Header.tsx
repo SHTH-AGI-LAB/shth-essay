@@ -1,7 +1,7 @@
 // src/components/Header.tsx
 "use client";
 import { useEffect, useState } from "react";
-import type React from "react";   
+import type React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
@@ -19,9 +19,7 @@ type Usage = {
 };
 
 function Badge({
-  label,
-  value,
-  tone,
+  label, value, tone,
 }: {
   label: string;
   value: number;
@@ -34,9 +32,7 @@ function Badge({
     purple: "bg-purple-50 text-purple-700 border-purple-200",
   };
   return (
-    <span
-      className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium ${palette[tone]}`}
-    >
+    <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium ${palette[tone]}`}>
       {label} {value}회
     </span>
   );
@@ -48,22 +44,14 @@ export default function Header() {
   const [usage, setUsage] = useState<Usage | null>(null);
   const [open, setOpen] = useState(false);
 
-  // ✅ 안드로이드 “두 번 토글” 방지: 단일 포인터 이벤트 핸들러
+  // 단일 포인터 이벤트 핸들러 (중복 토글 방지)
   const toggleMenu = (e: React.PointerEvent<HTMLButtonElement>) => {
-  e.preventDefault();
-  e.stopPropagation();
-  setOpen(v => !v);
+    e.preventDefault();
+    e.stopPropagation();
+    setOpen(v => !v);
   };
 
-  // (옵션) 열려 있을 때 바깥 클릭하면 닫기
-  useEffect(() => {
-    if (!open) return;
-    const close = () => setOpen(false);
-    window.addEventListener("click", close, { once: true });
-    return () => window.removeEventListener("click", close);
-  }, [open]);
-
-  // 로그인 상태에서만 usage 호출
+  // 로그인 시에만 usage 불러오기
   useEffect(() => {
     if (status !== "authenticated") {
       setUsage(null);
@@ -76,13 +64,9 @@ export default function Header() {
         if (!res.ok) return;
         const data = (await res.json()) as Usage;
         if (alive) setUsage(data);
-      } catch {
-        /* noop */
-      }
+      } catch {}
     })();
-    return () => {
-      alive = false;
-    };
+    return () => { alive = false; };
   }, [status]);
 
   const goLogin = () => router.push("/login");
@@ -90,15 +74,9 @@ export default function Header() {
   const Badges = () =>
     usage ? (
       <div className="flex items-center gap-2">
-        {usage.freeRemaining > 0 && (
-          <Badge label="무료" value={usage.freeRemaining} tone="blue" />
-        )}
-        {usage.standardCount > 0 && (
-          <Badge label="스탠다드" value={usage.standardCount} tone="emerald" />
-        )}
-        {usage.premiumCount > 0 && (
-          <Badge label="프리미어" value={usage.premiumCount} tone="amber" />
-        )}
+        {usage.freeRemaining > 0 && <Badge label="무료" value={usage.freeRemaining} tone="blue" />}
+        {usage.standardCount > 0 && <Badge label="스탠다드" value={usage.standardCount} tone="emerald" />}
+        {usage.premiumCount > 0 && <Badge label="프리미어" value={usage.premiumCount} tone="amber" />}
         {usage.vipCount > 0 && <Badge label="VIP" value={usage.vipCount} tone="purple" />}
       </div>
     ) : null;
@@ -108,12 +86,8 @@ export default function Header() {
       <nav className="mx-auto flex max-w-4xl items-center justify-between p-4">
         {/* 홈 */}
         <Link href="/" className="inline-flex items-center gap-2">
-          <span className="text-xl font-extrabold tracking-tight text-blue-700">
-            닥터필리스
-          </span>
-          <span className="rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[10px] text-blue-700">
-            논술전문
-          </span>
+          <span className="text-xl font-extrabold tracking-tight text-blue-700">닥터필리스</span>
+          <span className="rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[10px] text-blue-700">논술전문</span>
         </Link>
 
         {/* 데스크톱 메뉴 */}
@@ -126,9 +100,7 @@ export default function Header() {
 
           {status === "authenticated" ? (
             <>
-              <span className="text-[var(--foreground)]">
-                안녕하세요, {session?.user?.name ?? "회원"}님~
-              </span>
+              <span className="text-[var(--foreground)]">안녕하세요, {session?.user?.name ?? "회원"}님~</span>
               <Badges />
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}
@@ -153,7 +125,8 @@ export default function Header() {
           aria-label="메뉴 열기"
           aria-expanded={open}
           aria-controls="mobile-menu"
-          onPointerUp={toggleMenu} // ← 단일 이벤트로 통합
+          onPointerDown={(e) => e.stopPropagation()}   // 바깥으로 전파 방지
+          onPointerUp={toggleMenu}                      // 단일 이벤트
           className="rounded border border-[var(--line)] p-2 md:hidden select-none active:opacity-80 [touch-action:manipulation]"
         >
           ☰
@@ -168,9 +141,7 @@ export default function Header() {
         <div className="flex flex-col gap-3 py-3 text-sm">
           {status === "authenticated" ? (
             <>
-              <span className="text-[var(--foreground)]">
-                안녕하세요, {session?.user?.name ?? "회원"}님~
-              </span>
+              <span className="text-[var(--foreground)]">안녕하세요, {session?.user?.name ?? "회원"}님~</span>
               <Badges />
               <div className="h-px bg-[var(--line)]" />
               <Link href="/about" className="py-1 text-[var(--foreground)]">소개</Link>

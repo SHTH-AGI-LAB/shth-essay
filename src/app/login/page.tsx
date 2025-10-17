@@ -76,18 +76,20 @@ function LoginInner() {
 
         {/* 인앱 경고 */}
         {inApp && (
-          <div className="mb-4 rounded-lg border border-[var(--line)] bg-yellow-50 text-gray-800 p-3 text-sm">
-            <b>⚠️ 휴대폰·패드에서 앱(카톡·인스타·네이버 등)으로 열면 로그인 오류가 발생합니다.</b>
-            <div className="mt-1">
-              반드시 <b>외부 브라우저(Chrome 또는 Safari)</b>로 열어주세요.
-            </div>
-            <button
-              onClick={openExternally}
-              className="mt-2 w-full rounded-md border border-gray-300 bg-white py-2 text-sm font-medium hover:bg-gray-100"
-            >
-              브라우저에서 열기
-            </button>
-          </div>
+       <div className="mb-4 rounded-lg border border-[var(--line)] bg-yellow-50 text-gray-800 p-3 text-sm">
+       <b>📱 휴대폰·패드에서 로그인 안내</b>
+       <div className="mt-1">
+        인앱(카톡·인스타·네이버 등)에서는 팝업/쿠키 제한으로 로그인이 원활하지 않을 수 있어요.
+       <br />
+       <b>버튼을 <u>꾸-욱 길게 눌러</u> 로그인하거나, 외부 브라우저(Chrome/Safari)에서 시도해주세요.</b>
+       </div>
+       <button
+        onClick={openExternally}
+        className="mt-2 w-full rounded-md border border-gray-300 bg-white py-2 text-sm font-medium hover:bg-gray-100"
+        >
+        브라우저에서 열기
+        </button>
+        </div>
         )}
 
         {/* ✅ 구글 로그인 */}
