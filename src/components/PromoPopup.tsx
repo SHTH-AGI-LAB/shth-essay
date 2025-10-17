@@ -88,7 +88,7 @@ export default function PromoPopup() {
 
     {/* 안내 문구 */}
     <p className="text-xs text-gray-500 mb-2 text-center">
-      이벤트 참여 시 개인정보 수집·이용에 동의한 것으로 간주됩니다.
+      이벤트 참여 시 개인정보 수집·이용에 동의한 것으로 간주
     </p>
 
     {/* 체크박스 + 버튼 */}
@@ -102,8 +102,8 @@ export default function PromoPopup() {
         오늘 하루 보지 않기
       </label>
       <div className="flex gap-2">
-        <a className="px-3 py-1 bg-black text-white rounded text-xs" href="/terms" onClick={onClose}>이용안내 보기</a>
-        <a className="px-3 py-1 border border-gray-400 rounded text-xs" href="mailto:contact@ai-rabbit.com" onClick={onClose}>이벤트 문의</a>
+        <a className="px-3 py-1 bg-black text-white rounded text-xs" href="/terms" onClick={onClose}>이용안내</a>
+        <a className="px-3 py-1 border border-gray-400 rounded text-xs" href="mailto:contact@ai-rabbit.com" onClick={onClose}>e-문의</a>
       </div>
     </div>
   </div>
