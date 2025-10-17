@@ -82,8 +82,8 @@ export default function PromoPopup() {
 
     {/* 본문 */}
     <p className="text-sm mb-3 text-center">
-      프리미엄 이상 가입 시 논술노트 & 머그컵 증정 (선착순)<br />
-      AI 첨삭 이용 합격 인증 시 도서문화상품권 5만원 지급 (무료도 포함)
+      프리미엄 이상 가입 시 논술노트 & 머그컵 증정 <br />
+      AI 첨삭 이용 합격 인증 시 도서문화상품권 5만원
     </p>
 
     {/* 안내 문구 */}

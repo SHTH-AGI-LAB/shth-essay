@@ -48,7 +48,7 @@ export default function Home() {
             className="mb-3 h-44 sm:h-48 w-auto"
           />
           <p className="mt-3 text-lg sm:text-xl font-semibold opacity-100">
-            🔐구글 로그인 무료3회 대학별 AI 20초 완성
+            🔐구글로 로그인하면 무료 3회 이용
           </p>
         </div>
 

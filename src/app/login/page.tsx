@@ -79,9 +79,9 @@ function LoginInner() {
        <div className="mb-4 rounded-lg border border-[var(--line)] bg-yellow-50 text-gray-800 p-3 text-sm">
        <b>📱 휴대폰·패드에서 로그인 안내</b>
        <div className="mt-1">
-        인앱(카톡·인스타·네이버 등)에서는 팝업/쿠키 제한으로 로그인이 원활하지 않을 수 있어요.
+        인앱(카톡·인스타·네이버 등)에서는 팝업/쿠키 제한으로 로그인이 원활하지 않아요.
        <br />
-       <b>버튼을 <u>꾸-욱 길게 눌러</u> 로그인하거나, 외부 브라우저(Chrome/Safari)에서 시도해주세요.</b>
+       <b>아래 외부 브라우저(Chrome/Safari)에서 시도해주세요.</b>
        </div>
        <button
         onClick={openExternally}
