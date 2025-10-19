@@ -271,9 +271,9 @@ export const UNIVERSITIES = [
   scale: 800,
   gradingType: "800점제",
   criteria: {
-    문제1: { desc: "제시문 분류·요약", weight: 240 },
-    문제2: { desc: "비교·대조, 보기에 따라 출제자의 의도에 맞게 평가", weight: 240 },
-    문제3: { desc: "영어 지문(보기) 중심 추론 — 출제 의도 파악", weight: 320 },
+    문제1: { desc: "제시문 분류·요약", weight: 30 },
+    문제2: { desc: "비교·대조, 보기에 따라 출제자의 의도에 맞게 평가", weight: 30 },
+    문제3: { desc: "영어 지문(보기) 중심 추론 — 출제 의도 파악", weight: 40 },
     },
     bonus: "가산점(보기 중심, 출제 의도 파악)",
   },
