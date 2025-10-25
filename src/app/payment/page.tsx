@@ -1,5 +1,6 @@
 "use client";
 
+
 import Link from "next/link";
 
 const PLANS = [
@@ -37,8 +38,7 @@ const PLANS = [
       "<strong>전문가 원고지 첨삭 및 합격 리포트 5회</strong>",
     ],
   },
-];
-
+]; 
   export default function PaymentPage() {
   return (
     <main className="min-h-screen bg-white text-gray-900">
