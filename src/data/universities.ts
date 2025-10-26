@@ -176,7 +176,7 @@ export const UNIVERSITIES = [
   gradingType: "700점제",
   criteria: {
     문제1: { desc: "비판적 사고력, 분석력, 분량 준수", weight: 35 },
-    문제2: { desc: "창의적인 분석력, 분량 준수", weight: 65 },
+    문제2: { desc: "옹호-비판 양면적 분석, 비판력, 창의적 대안", weight: 65 },
   },
   bonus: "가산점(기서결 구성, 간결한 문장, 지문의 세밀한 분석력)",
   },
