@@ -130,10 +130,9 @@ export const UNIVERSITIES = [
     scale: 100,
     gradingType: "100점제",
     criteria: {
-      문제1: { desc: "통합적 논술, 추상적 확장 능력", weight: 40 },
-      문제2: { desc: "통합적 논술, 사회적 윤리적 담론, 확장적 사고력", weight: 60 },
-    },
-    bonus: "가산점(기서결 구성, 어휘력, 유기적 연결)",
+      문제1: { desc: "핵심논제, 문제의식, 윤리적 성찰, 사회적확장 ", weight: 100 },
+      },
+    bonus: "가산점(기승전결 구성, 유기적 연결, 어휘력, 사회적 확장)",
   },
   {
     name: "서울여대",
@@ -298,13 +297,14 @@ export const UNIVERSITIES = [
     bonus: "가산점(어휘력, 문장력, 유기적 연결)",
   },
   {
-    name: "ALL대",
-    slug: "all",
+    name: "항공대",
+    slug: "hangkong",
     scale: 100,
-    gradingType: "100점제",
+    gradingType: "1000점제",
     criteria: {
-      문제1: { desc: "문장력, 어휘력, 표현력", weight: 100 },
+      문제1: { desc: "비교.대조, 논리적 유형화, 기서결", weight: 50 },
+      문제2: { desc: "도표분석, 인과, 해결방안 ", weight: 50 },
       },
-    bonus: "이곳에서 문장첨삭을 연습하세요.",
+    bonus: "가산점(기서결 구성의 논리적 완성, 도표 주제 요약, 대안)",
   },
 ];
