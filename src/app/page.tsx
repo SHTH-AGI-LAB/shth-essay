@@ -30,7 +30,7 @@ const UNIVERSITIES = [
   { name: "한국외대", slug: "hufs" },
   { name: "한양대", slug: "hanyang" },
   { name: "홍익대", slug: "hongik" },
-  { name: "항공대", slug: "hanggong" },
+  { name: "항공대", slug: "hangkong" },
 ];
 
 export default function Home() {
