@@ -7,8 +7,6 @@ import { getSupabaseAdmin } from "@/lib/supabaseServer";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const supabaseAdmin = getSupabaseAdmin();
-
 // 환경변수 기본값(없으면 안전장치)
 const FREE_TRIAL_LIMIT = Number(process.env.FREE_TRIAL_LIMIT ?? 3);
 const TRIAL_WINDOW_DAYS = Number(process.env.TRIAL_WINDOW_DAYS ?? 30);
@@ -20,6 +18,8 @@ const plusDaysISO = (d: number) =>
 
 export async function GET() {
   try {
+    const supabaseAdmin = getSupabaseAdmin();
+
     const session = await getServerSession(authOptions);
     const email = session?.user?.email ?? null;
     if (!email) {
@@ -142,7 +142,7 @@ export async function GET() {
       FREE_TRIAL_LIMIT - (row.usage_count ?? 0)
     );
 
-    // 5) 모든 버킷 포함한 전체 남은 횟수 계산 (핵심 FIX)
+    // 5) 모든 버킷 포함한 전체 남은 횟수 계산
     const totalRemaining =
       freeRemaining +
       (row.vip_count ?? 0) +
@@ -159,15 +159,15 @@ export async function GET() {
       premiumCount: row.premium_count ?? 0,
       vipCount: row.vip_count ?? 0,
       standardCount: row.standard_count ?? 0,
-      totalRemaining, // ← UI는 이 값을 사용하면 됨
+      totalRemaining,
       windowEnd: row.window_end ?? null,
       usageExpiryDays: row.usage_expiry_days ?? expiryDays,
     });
   } catch (e: unknown) {
-  const detail = e instanceof Error ? e.message : String(e);
-  return NextResponse.json(
-    { error: "SERVER_ERROR", detail },
-    { status: 500 }
-  );
-}
+    const detail = e instanceof Error ? e.message : String(e);
+    return NextResponse.json(
+      { error: "SERVER_ERROR", detail },
+      { status: 500 }
+    );
+  }
 }

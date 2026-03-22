@@ -1,12 +1,13 @@
 // src/app/api/payment/confirm/route.ts
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabaseServer";
-const supabaseAdmin = getSupabaseAdmin();
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function POST(req: Request) {
   try {
+    const supabaseAdmin = getSupabaseAdmin();
+
     // 1) 로그인 사용자 확인
     const session = await getServerSession(authOptions);
     const email = session?.user?.email ?? null;
@@ -16,7 +17,7 @@ export async function POST(req: Request) {
 
     // 2) 클라이언트에서 보낸 orderName 확인
     const body = await req.json();
-    const { orderName } = body; // 예: "스탠다드 10회" / "프리미어 30회" / "VIP 100회"
+    const { orderName } = body;
 
     // 3) DB에서 현재 사용자 찾기
     const { data: current, error: readErr } = await supabaseAdmin
@@ -26,7 +27,10 @@ export async function POST(req: Request) {
       .maybeSingle();
 
     if (readErr) {
-      return NextResponse.json({ error: "READ_FAILED", detail: readErr.message }, { status: 500 });
+      return NextResponse.json(
+        { error: "READ_FAILED", detail: readErr.message },
+        { status: 500 }
+      );
     }
     if (!current) {
       return NextResponse.json({ error: "USER_NOT_FOUND" }, { status: 404 });
@@ -48,23 +52,26 @@ export async function POST(req: Request) {
       .eq("email", email);
 
     if (upErr) {
-      return NextResponse.json({ error: "UPDATE_FAILED", detail: upErr.message }, { status: 500 });
+      return NextResponse.json(
+        { error: "UPDATE_FAILED", detail: upErr.message },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ success: true, updates });
   } catch (err: unknown) {
-  console.error("Confirm API error:", err);
+    console.error("Confirm API error:", err);
 
-  if (err instanceof Error) {
+    if (err instanceof Error) {
+      return NextResponse.json(
+        { error: "SERVER_ERROR", detail: err.message },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json(
-      { error: "SERVER_ERROR", detail: err.message },
+      { error: "SERVER_ERROR", detail: String(err) },
       { status: 500 }
     );
   }
-
-  return NextResponse.json(
-    { error: "SERVER_ERROR", detail: String(err) },
-    { status: 500 }
-  );
-}
 }
