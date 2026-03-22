@@ -74,7 +74,7 @@ export const UNIVERSITIES = [
     gradingType: "100점제",
     criteria: {
       문제1: { desc: "소문제를 문단 바꿔 입력하세요. 제시문 이해, 요약", weight: 30 },
-      문제2: { desc: "소문제를 문단 바꿔 입력하세요. 문제점, 사고력", weight: 40 },
+      문제2: { desc: "소문제를 문단 바꿔 입력하세요. 문제점, 사고력", weight: 30 },
       문제3: { desc: "소문제를 문단 바꿔 입력하세요. 자료의 활용능력, 해결방안", weight: 40 },
     },
     bonus: "가산점(120분 시간분배, 논리력)",
