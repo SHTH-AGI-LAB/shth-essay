@@ -145,9 +145,9 @@ export default function Header() {
               <div className="h-px bg-[var(--line)]" />
               <Link href="/about" className="py-1 text-[var(--foreground)]">소개</Link>
               <Link href="/payment" className="py-1 text-[var(--foreground)]">결제방식</Link>
-              <Link href="/refund" className="py-1 text-[var(--foreground)]">환불정책</Link>
-              <Link href="/terms" className="py-1 text-[var(--foreground)]">이용약관</Link>
-              <Link href="/privacy" className="py-1 text-[var(--foreground)]">개인정보</Link>
+              <Link href="/customer" className="py-1 text-[var(--foreground)]">고객안내</Link>
+              <Link href="/ai-library" className="py-1 text-[var(--foreground)]">광주 AI 독서탐구관</Link>
+              <Link href="/public-ai" className="py-1 text-[var(--foreground)]"> 공공데이터 AI 입시정보관</Link>
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}
                 className="mt-2 w-full rounded-lg border border-[var(--line)] bg-[var(--card)] py-2 font-medium text-[var(--card-foreground)] hover:opacity-90"
@@ -159,9 +159,9 @@ export default function Header() {
             <>
               <Link href="/about" className="py-1 text-[var(--foreground)]">소개</Link>
               <Link href="/payment" className="py-1 text-[var(--foreground)]">결제방식</Link>
-              <Link href="/refund" className="py-1 text-[var(--foreground)]">환불정책</Link>
-              <Link href="/terms" className="py-1 text-[var(--foreground)]">이용약관</Link>
-              <Link href="/privacy" className="py-1 text-[var(--foreground)]">개인정보</Link>
+              <Link href="/customer" className="py-1 text-[var(--foreground)]">고객안내</Link>
+              <Link href="/ai-library" className="py-1 text-[var(--foreground)]">광주 AI 독서탐구관</Link>
+              <Link href="/public-ai" className="py-1 text-[var(--foreground)]">공공데이터 AI 입시정보관</Link>
               <button
                 onClick={goLogin}
                 className="mt-2 w-full rounded-lg bg-blue-600 py-2 font-medium text-white hover:brightness-110"
