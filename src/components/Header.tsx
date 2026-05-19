@@ -95,6 +95,7 @@ export default function Header() {
           <Link href="/about" className="text-[var(--foreground)] hover:opacity-80">소개</Link>
           <Link href="/payment" className="text-[var(--foreground)] hover:opacity-80">결제방식</Link>
           <Link href="/customer" className="text-[var(--foreground)] hover:opacity-80">고객안내</Link> 
+          <Link href="/ai-library" className="text-[var(--foreground)] hover:opacity-80">광주 AI 독서탐구관</Link>         
           {status === "authenticated" ? (
             <>
               <span className="text-[var(--foreground)]">안녕하세요, {session?.user?.name ?? "회원"}님~</span>
