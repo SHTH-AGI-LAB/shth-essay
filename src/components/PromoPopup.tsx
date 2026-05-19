@@ -103,7 +103,7 @@ export default function PromoPopup() {
       </label>
       <div className="flex gap-2">
         <a className="px-3 py-1 bg-black text-white rounded text-xs" href="/terms" onClick={onClose}>이용안내</a>
-        <a className="px-3 py-1 border border-gray-400 rounded text-xs" href="mailto:contact@ai-rabbit.com" onClick={onClose}>e-문의</a>
+        <a className="px-3 py-1 border border-gray-400 rounded text-xs" href="mailto:contact@ai-rabbit.kr" onClick={onClose}>e-문의</a>
       </div>
     </div>
   </div>

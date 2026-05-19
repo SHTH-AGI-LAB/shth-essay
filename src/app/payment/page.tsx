@@ -116,7 +116,7 @@ const PLANS = [
           </div>
           <div>
              닥터필리스 AI대입논술 첨삭  · 사업자/ 주식회사 에어래빗 AIrabbit Inc. · 사업자등록번호/ 536-86-03683 · 대표/ 주헌영 · 주소/ 광주광역시 남구 행암도동길 43-11 1층 
-             · 이메일/ contact@ai-rabbit.com · 대표번호/ 062-651-0922
+             · 이메일/ contact@ai-rabbit.kr · 대표번호/ 062-651-0922
           </div>
         </div>
       </section>
