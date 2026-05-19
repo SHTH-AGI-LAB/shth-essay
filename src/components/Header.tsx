@@ -94,10 +94,7 @@ export default function Header() {
         <div className="hidden items-center gap-5 text-sm md:flex">
           <Link href="/about" className="text-[var(--foreground)] hover:opacity-80">소개</Link>
           <Link href="/payment" className="text-[var(--foreground)] hover:opacity-80">결제방식</Link>
-          <Link href="/refund" className="text-[var(--foreground)] hover:opacity-80">환불정책</Link>
-          <Link href="/terms" className="text-[var(--foreground)] hover:opacity-80">이용약관</Link>
-          <Link href="/privacy" className="text-[var(--foreground)] hover:opacity-80">개인정보</Link>
-
+          <Link href="/customer" className="text-[var(--foreground)] hover:opacity-80">고객안내</Link> 
           {status === "authenticated" ? (
             <>
               <span className="text-[var(--foreground)]">안녕하세요, {session?.user?.name ?? "회원"}님~</span>
