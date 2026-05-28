@@ -110,18 +110,26 @@ export async function GET() {
 
     let row = current;
 
-    if (isExpired) {
-      const resetWindow = plusDaysISO(expiryDays);
+    // 유료 사용 여부 확인
+const hasPaidUsage =
+  (current.premium_count ?? 0) > 0 ||
+  (current.vip_count ?? 0) > 0 ||
+  (current.standard_count ?? 0) > 0;
 
-      const { data: updated, error: upErr } = await supabaseAdmin
-        .from("user_usage")
-        .update({
-          plan_type: "free",
-          premium_count: 0,
-          vip_count: 0,
-          standard_count: 0,
-          window_end: resetWindow,
-        })
+if (isExpired) {
+  const resetWindow = plusDaysISO(expiryDays);
+
+  const updatePayload: {
+    plan_type: string;
+    window_end: string;
+  } = {
+    plan_type: hasPaidUsage ? "expired" : "free",
+    window_end: resetWindow,
+  };
+
+  const { data: updated, error: upErr } = await supabaseAdmin
+    .from("user_usage")
+    .update(updatePayload)
         .eq("email", email)
         .select("*")
         .maybeSingle();
