@@ -223,9 +223,8 @@ export default function PublicAIPage() {
               <div className="border-t pt-3 text-xs text-gray-500">
                 공공데이터 활용
                 <br />
-                국가중점데이터(대학 강의계획서)
-                <br />
-                광주광역시 도서관 추천도서
+                클릭시🖱️ 대학별 논술 입시정보 페이지로 이동합니다
+                                
               </div>
             </div>
           ))}
