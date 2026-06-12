@@ -95,7 +95,7 @@ export default function Header() {
           <Link href="/about" className="text-[var(--foreground)] hover:opacity-80">소개</Link>
           <Link href="/payment" className="text-[var(--foreground)] hover:opacity-80">결제방식</Link>
           <Link href="/customer" className="text-[var(--foreground)] hover:opacity-80">고객안내</Link> 
-          <Link href="/ai-library" className="text-[var(--foreground)] hover:opacity-80">광주 AI 독서탐구관</Link>         
+                   
           <Link href="/public-ai" className="text-[var(--foreground)] hover:opacity-80">공공데이터 AI 입시정보관</Link>
           {status === "authenticated" ? (
             <>
@@ -146,7 +146,7 @@ export default function Header() {
               <Link href="/about" className="py-1 text-[var(--foreground)]">소개</Link>
               <Link href="/payment" className="py-1 text-[var(--foreground)]">결제방식</Link>
               <Link href="/customer" className="py-1 text-[var(--foreground)]">고객안내</Link>
-              <Link href="/ai-library" className="py-1 text-[var(--foreground)]">광주 AI 독서탐구관</Link>
+              
               <Link href="/public-ai" className="py-1 text-[var(--foreground)]"> 공공데이터 AI 입시정보관</Link>
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}
@@ -160,7 +160,7 @@ export default function Header() {
               <Link href="/about" className="py-1 text-[var(--foreground)]">소개</Link>
               <Link href="/payment" className="py-1 text-[var(--foreground)]">결제방식</Link>
               <Link href="/customer" className="py-1 text-[var(--foreground)]">고객안내</Link>
-              <Link href="/ai-library" className="py-1 text-[var(--foreground)]">광주 AI 독서탐구관</Link>
+              
               <Link href="/public-ai" className="py-1 text-[var(--foreground)]">공공데이터 AI 입시정보관</Link>
               <button
                 onClick={goLogin}
