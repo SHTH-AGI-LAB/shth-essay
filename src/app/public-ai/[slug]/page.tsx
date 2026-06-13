@@ -127,22 +127,18 @@ const universityDetails: Record<string, UniversityDetail> = {
   }
 };
 
-export default function UniversityDetailPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
-  const { slug } = params;
+interface PageProps {
+  params: Promise<{ slug: string }>;
+}
+
+export default async function UniversityDetailPage({ params }: PageProps) {
+  const { slug } = await params;
+
+  console.log("slug =", slug);
+
   const university = universityDetails[slug];
 
-  const handleEssayClick = () => {
-    console.log("AI 첨삭 이동");
-
-    // TODO: 로그인 연동 준비
-    // 1. 로그인 여부 확인
-    // 2. 비로그인 → /login 페이지로 이동
-    // 3. 로그인 상태 → /essay 페이지로 이동
-  };
+  console.log("university =", university);
 
   if (!university) {
     return (
@@ -333,15 +329,15 @@ export default function UniversityDetailPage({
           </div>
         </div>
 
-        {/* AI 첨삭 바로가기 버튼 */}
+        {/* AI 첨삭 바로가기 버튼 - Link로 변경 */}
         <div className="mt-12 flex justify-center">
-          <button
-            onClick={handleEssayClick}
+          <Link
+            href="/login"
             className="group flex items-center gap-4 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 transition-all text-white text-xl font-semibold px-12 py-6 rounded-3xl shadow-2xl shadow-indigo-500/30 active:scale-[0.97]"
           >
             <span>🤖 AI 첨삭 바로가기</span>
             <span className="text-3xl group-hover:translate-x-1 transition-transform">→</span>
-          </button>
+          </Link>
         </div>
 
         <div className="text-center mt-10">
